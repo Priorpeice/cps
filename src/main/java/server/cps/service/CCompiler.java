@@ -1,0 +1,62 @@
+package server.cps.service;
+
+import org.springframework.stereotype.Service;
+import server.cps.model.CompilationResult;
+import server.cps.model.Compiler;
+
+import java.io.*;
+@Service("cCompiler")
+public class CCompiler implements Compiler {
+    @Override
+    public CompilationResult compileAndRun(String code) throws IOException, InterruptedException {
+        return compileAndRun(code, null);
+    }
+
+    @Override
+    public CompilationResult compileAndRun(String code, String input) throws IOException, InterruptedException {
+        String fileName = "temp.c";
+        writeStringToFile(code, fileName);
+
+        String compileCommand = "gcc " + fileName + " -o temp";
+        executeCommand(compileCommand);
+
+        String runCommand = "./temp";
+
+        Process process = Runtime.getRuntime().exec(runCommand);
+
+        if (input != null && !input.isEmpty()) {
+            try (OutputStream outputStream = process.getOutputStream()) {
+                outputStream.write(input.getBytes());
+            }
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        StringBuilder output = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            output.append(line).append("\n");
+        }
+        process.waitFor();
+
+        return new CompilationResult(output.toString());
+    }
+
+    private static void writeStringToFile(String content, String fileName) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write(content);
+        }
+    }
+    private String executeCommand(String command) throws IOException, InterruptedException {
+        Process process = Runtime.getRuntime().exec(command);
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        StringBuilder output = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            output.append(line).append("\n");
+        }
+        process.waitFor();
+
+        return output.toString();
+    }
+}
