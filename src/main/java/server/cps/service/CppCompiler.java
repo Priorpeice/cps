@@ -19,7 +19,11 @@ public class CppCompiler implements Compiler {
         writeStringToFile(code, fileName);
 
         String compileCommand = "g++ " + fileName + " -o temp";
-        executeCommand(compileCommand);
+        String compileOutput = executeCommand(compileCommand);
+
+        if (compileOutput.contains("error")) {
+            return new CompilationResult("Compilation failed:\n" + compileOutput);
+        }
 
         String runCommand = "./temp";
 
@@ -61,7 +65,7 @@ public class CppCompiler implements Compiler {
 
         if (exitCode != 0) {
             output.append("fail").append("\n");
-        }
+        }xw
 
         return output.toString();
     }
