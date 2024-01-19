@@ -65,7 +65,7 @@ public class CppCompiler implements Compiler {
 
         if (exitCode != 0) {
             output.append("fail").append("\n");
-        }xw
+        }
 
         return output.toString();
     }
