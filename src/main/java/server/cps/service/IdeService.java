@@ -1,34 +1,28 @@
 package server.cps.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import server.cps.model.CompilationResult;
 import server.cps.model.Compiler;
 import server.cps.model.SubmissionResult;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Service
 public class IdeService {
+    private final Map<String, Compiler> languageCompilerMap;
 
-    private final Compiler cCompiler;
-    private final Compiler pythonCompiler;
-
-    public IdeService(@Qualifier("cCompiler") Compiler cCompiler,
-                      @Qualifier("pythonCompiler") Compiler pythonCompiler) {
-        this.cCompiler = cCompiler;
-        this.pythonCompiler = pythonCompiler;
+    public IdeService(Map<String, Compiler> languageCompilerMap) {
+        this.languageCompilerMap = languageCompilerMap;
     }
+
+
     public CompilationResult compileAndRun(String code, String language, String input) {
         Compiler selectedCompiler = getCompilerForLanguage(language);
-
         try {
             if (input == null) {
-                // No input provided by the user
                 return selectedCompiler.compileAndRun(code);
             } else {
-                // Input provided by the user
                 return selectedCompiler.compileAndRun(code, input);
             }
         } catch (IOException | InterruptedException e) {
@@ -38,7 +32,6 @@ public class IdeService {
     }
     public SubmissionResult submitCode(String code, String language) {
         Compiler selectedCompiler = getCompilerForLanguage(language);
-
         try {
             CompilationResult compilationResult = selectedCompiler.compileAndRun(code);
 
@@ -55,10 +48,9 @@ public class IdeService {
     }
 
     private Compiler getCompilerForLanguage(String language) {
-        if ("c".equalsIgnoreCase(language)) {
-            return cCompiler;
-        } else if ("python".equalsIgnoreCase(language)) {
-            return pythonCompiler;
+        Compiler compiler = languageCompilerMap.get(language);
+        if (compiler != null) {
+            return compiler;
         }
 
         throw new IllegalArgumentException("Unsupported language: " + language);

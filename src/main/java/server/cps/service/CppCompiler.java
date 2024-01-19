@@ -6,8 +6,8 @@ import server.cps.model.Compiler;
 
 import java.io.*;
 
-@Service("c")
-public class CCompiler implements Compiler {
+@Service("cpp")
+public class CppCompiler implements Compiler {
     @Override
     public CompilationResult compileAndRun(String code) throws IOException, InterruptedException {
         return compileAndRun(code, null);
@@ -15,15 +15,11 @@ public class CCompiler implements Compiler {
 
     @Override
     public CompilationResult compileAndRun(String code, String input) throws IOException, InterruptedException {
-        String fileName = "temp.c";
+        String fileName = "temp.cpp";
         writeStringToFile(code, fileName);
 
-        String compileCommand = "gcc " + fileName + " -o temp";
-        String compileOutput = executeCommand(compileCommand);
-
-        if (compileOutput.contains("error")) {
-            return new CompilationResult("Compilation failed:\n" + compileOutput);
-        }
+        String compileCommand = "g++ " + fileName + " -o temp";
+        executeCommand(compileCommand);
 
         String runCommand = "./temp";
 
@@ -41,13 +37,7 @@ public class CCompiler implements Compiler {
         while ((line = reader.readLine()) != null) {
             output.append(line).append("\n");
         }
-
-        int exitCode = process.waitFor();
-
-        // Check exit code and handle errors
-        if (exitCode != 0) {
-            output.append("Execution failed\n");
-        }
+        process.waitFor();
 
         return new CompilationResult(output.toString());
     }
@@ -61,17 +51,19 @@ public class CCompiler implements Compiler {
     private String executeCommand(String command) throws IOException, InterruptedException {
         Process process = Runtime.getRuntime().exec(command);
 
-        // Capture error stream
-        BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        StringBuilder errorOutput = new StringBuilder();
-        String errorLine;
-        while ((errorLine = errorReader.readLine()) != null) {
-            errorOutput.append(errorLine).append("\n");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        StringBuilder output = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            output.append(line).append("\n");
+        }
+        int exitCode = process.waitFor();
+
+        if (exitCode != 0) {
+            output.append("fail").append("\n");
         }
 
-        // Wait for the process to finish
-        process.waitFor();
-
-        return errorOutput.toString();
+        return output.toString();
     }
 }
+
