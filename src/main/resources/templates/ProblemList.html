@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Problem List</title>
+</head>
+<body>
+<h1>Problem List</h1>
+<table>
+  <thead>
+  <tr>
+    <th>Title</th>
+    <th>Description</th>
+    <!-- 다른 열들 추가 가능 -->
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="problem : ${problems}">
+    <td th:text="${problem.title}"></td>
+    <td th:text="${problem.description}"></td>
+    <!-- 다른 열들 추가 가능 -->
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>
