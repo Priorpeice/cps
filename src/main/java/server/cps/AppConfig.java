@@ -26,7 +26,6 @@ public class AppConfig {
         return languageCompilerMap;
     }
 
-
     @Bean
     public IdeService ideService( @Autowired Map<String, Compiler> languageCompilerMap) {
         return new IdeService(languageCompilerMap);

@@ -15,13 +15,8 @@ import java.util.Collections;
 public class JavaCompiler implements Compiler {
 
     @Override
-    public CompilationResult compileAndRun(String code) throws IOException, InterruptedException {
-        return compileAndRun(code, null);
-    }
-
-    @Override
-    public CompilationResult compileAndRun(String code, String input) throws IOException, InterruptedException {
-        // 1. 컴파일
+    public CompilationResult compile(String code, String input) throws IOException, InterruptedException {
+        // 컴파일
         String className = "Main";
         String fileName = className + ".java";
 
@@ -29,35 +24,39 @@ public class JavaCompiler implements Compiler {
         writeStringToFile(code, fileName);
 
         // 컴파일
-        compileJavaFile(fileName);
-
-        // 2. 실행
-        String[] command = {"java", className};
-        return executeCommand(command, input);
+        return  compileJavaFile(fileName);
     }
 
     private static void writeStringToFile(String content, String fileName) throws IOException {
         Files.write(Paths.get(fileName), Collections.singleton(content), StandardCharsets.UTF_8);
     }
 
-    private static void compileJavaFile(String fileName) throws IOException {
-        javax.tools.JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+    private static CompilationResult compileJavaFile(String fileName) throws IOException{
+            javax.tools.JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+            DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
-        try (StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null)) {
-            Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects(fileName);
-            javax.tools.JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits);
+            try (StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null)) {
+                Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects(fileName);
+                javax.tools.JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits);
 
-            if (!task.call()) {
-                for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-                    System.err.format("Error on line %d in %s%n",
-                            diagnostic.getLineNumber(),
-                            diagnostic.getSource().toUri());
-                    System.err.println(diagnostic.getMessage(null));
+                if (!task.call()) {
+                    StringBuilder errorOutput = new StringBuilder("Compilation failed:\n");
+                    for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+                        errorOutput.append(String.format("Error on line %d in %s%n",
+                                diagnostic.getLineNumber(),
+                                diagnostic.getSource().toUri()));
+                        errorOutput.append(diagnostic.getMessage(null)).append("\n");
+                    }
+                    return new CompilationResult(errorOutput.toString(), false);
                 }
-                throw new RuntimeException("Compilation failed");
             }
-        }
+        return new CompilationResult(fileName, true);
+    }
+
+    @Override
+    public CompilationResult run(String fileName, String input) throws IOException, InterruptedException {
+        String[] command = {"java", fileName};
+        return executeCommand(command, input);
     }
 
     private static CompilationResult executeCommand(String[] command, String input) throws IOException, InterruptedException {
@@ -90,7 +89,7 @@ public class JavaCompiler implements Compiler {
                 output.append("fail").append("\n");
             }
 
-            return new CompilationResult(output.toString());
+            return new CompilationResult(output.toString(),true);
         }
     }
 }

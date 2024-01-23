@@ -20,30 +20,16 @@ public class IdeService {
     public CompilationResult compileAndRun(String code, String language, String input) {
         Compiler selectedCompiler = getCompilerForLanguage(language);
         try {
-            if (input == null) {
-                return selectedCompiler.compileAndRun(code);
-            } else {
-                return selectedCompiler.compileAndRun(code, input);
+            CompilationResult compileResult = selectedCompiler.compile(code, input);
+
+            if (compileResult.isCompile()) {
+                CompilationResult runResult = selectedCompiler.run(compileResult.getOutput(), input);
+                return new CompilationResult(runResult.getOutput(), true);
             }
+            return compileResult;
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public SubmissionResult submitCode(String code, String language) {
-        Compiler selectedCompiler = getCompilerForLanguage(language);
-        try {
-            CompilationResult compilationResult = selectedCompiler.compileAndRun(code);
-
-            int score = calculateScore(code);
-
-            SubmissionResult submissionResult = new SubmissionResult(compilationResult);
-            submissionResult.setScore(score);
-
-            return submissionResult;
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;
+            String errorMessage = "Exception during compilation: " + e.getMessage();
+            return new CompilationResult(errorMessage, false); // 컴파일 실패로 표시
         }
     }
 
@@ -52,11 +38,7 @@ public class IdeService {
         if (compiler != null) {
             return compiler;
         }
-
         throw new IllegalArgumentException("Unsupported language: " + language);
     }
 
-    private int calculateScore(String code) {
-        return code.length() / 10;
-    }
 }

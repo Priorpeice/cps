@@ -9,25 +9,31 @@ import java.io.*;
 @Service("cpp")
 public class CppCompiler implements Compiler {
     @Override
-    public CompilationResult compileAndRun(String code) throws IOException, InterruptedException {
-        return compileAndRun(code, null);
-    }
-
-    @Override
-    public CompilationResult compileAndRun(String code, String input) throws IOException, InterruptedException {
+    public CompilationResult compile(String code, String input) throws IOException, InterruptedException {
         String fileName = "temp.cpp";
         writeStringToFile(code, fileName);
 
         String compileCommand = "g++ " + fileName + " -o temp";
-        String compileOutput = executeCommand(compileCommand);
+        String compileOutput = executeCommand(compileCommand, input,true);
 
         if (compileOutput.contains("error")) {
-            return new CompilationResult("Compilation failed:\n" + compileOutput);
+            return new CompilationResult("Compilation failed:\n" + compileOutput, false);
         }
 
-        String runCommand = "./temp";
+        return new CompilationResult("temp", true); // fileName
+    }
 
-        Process process = Runtime.getRuntime().exec(runCommand);
+    @Override
+    public CompilationResult run(String fileName, String input) throws IOException, InterruptedException {
+        String runCommand = "./" + fileName;
+
+        String runOutput = executeCommand(runCommand, input,false);
+
+        return new CompilationResult(runOutput, true);
+    }
+
+    private static String executeCommand(String command, String input, boolean useErrorStream ) throws IOException, InterruptedException {
+        Process process = Runtime.getRuntime().exec(command);
 
         if (input != null && !input.isEmpty()) {
             try (OutputStream outputStream = process.getOutputStream()) {
@@ -35,15 +41,16 @@ public class CppCompiler implements Compiler {
             }
         }
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(useErrorStream ? process.getErrorStream() : process.getInputStream()));
         StringBuilder output = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
             output.append(line).append("\n");
         }
+
         process.waitFor();
 
-        return new CompilationResult(output.toString());
+        return output.toString();
     }
 
     private static void writeStringToFile(String content, String fileName) throws IOException {
@@ -51,23 +58,4 @@ public class CppCompiler implements Compiler {
             writer.write(content);
         }
     }
-
-    private String executeCommand(String command) throws IOException, InterruptedException {
-        Process process = Runtime.getRuntime().exec(command);
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        StringBuilder output = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            output.append(line).append("\n");
-        }
-        int exitCode = process.waitFor();
-
-        if (exitCode != 0) {
-            output.append("fail").append("\n");
-        }
-
-        return output.toString();
-    }
 }
-
