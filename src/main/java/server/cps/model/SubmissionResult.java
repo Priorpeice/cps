@@ -1,26 +1,22 @@
 package server.cps.model;
 
 public class SubmissionResult {
-    private CompilationResult compilationResult;
-    private int score;
+    private final CompilationResult compilationResult;
+    private final int score;
 
-    public SubmissionResult(CompilationResult compilationResult) {
+    public SubmissionResult(CompilationResult compilationResult, int score) {
         this.compilationResult = compilationResult;
+        this.score=score;
     }
-
+    public CompilationResult getCompilationResult() {
+        return compilationResult;
+    }
     public int getScore() {
         return score;
     }
 
-    public void setScore(int score) {
-        this.score = score;
-    }
 
-    public CompilationResult getCompilationResult() {
-        return compilationResult;
-    }
 
-    public void setCompilationResult(CompilationResult compilationResult) {
-        this.compilationResult = compilationResult;
-    }
+
+
 }

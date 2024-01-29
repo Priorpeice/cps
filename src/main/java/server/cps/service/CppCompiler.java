@@ -1,23 +1,32 @@
 package server.cps.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import server.cps.infra.ProcessExecutor;
 import server.cps.model.CompilationResult;
 import server.cps.model.Compiler;
 
 import java.io.*;
 
+
+
 @Service("cpp")
 public class CppCompiler implements Compiler {
+    @Autowired
+    private final ProcessExecutor processExecutor;
+
+    public CppCompiler(ProcessExecutor processExecutor) {
+        this.processExecutor = processExecutor;
+    }
+
     @Override
-    public CompilationResult compile(String code, String input) throws IOException, InterruptedException {
-        String fileName = "temp.cpp";
-        writeStringToFile(code, fileName);
+    public CompilationResult compile(String fileName, String input) throws IOException, InterruptedException {
+        String compileCommand = "gcc++ " + fileName + " -o temp";
+        CompilationResult compilationResult = processExecutor.executeCommand(compileCommand.split("\\s+"), input);
 
-        String compileCommand = "g++ " + fileName + " -o temp";
-        String compileOutput = executeCommand(compileCommand, input,true);
-
-        if (compileOutput.contains("error")) {
-            return new CompilationResult("Compilation failed:\n" + compileOutput, false);
+        if (!compilationResult.isCompile() || compilationResult.getOutput().contains("error")) {
+            return new CompilationResult("Compilation failed:\n" + compilationResult.getOutput(), false);
         }
 
         return new CompilationResult("temp", true); // fileName
@@ -27,35 +36,9 @@ public class CppCompiler implements Compiler {
     public CompilationResult run(String fileName, String input) throws IOException, InterruptedException {
         String runCommand = "./" + fileName;
 
-        String runOutput = executeCommand(runCommand, input,false);
-
-        return new CompilationResult(runOutput, true);
+        return processExecutor.executeCommand(new String[] { runCommand }, input);
     }
 
-    private static String executeCommand(String command, String input, boolean useErrorStream ) throws IOException, InterruptedException {
-        Process process = Runtime.getRuntime().exec(command);
 
-        if (input != null && !input.isEmpty()) {
-            try (OutputStream outputStream = process.getOutputStream()) {
-                outputStream.write(input.getBytes());
-            }
-        }
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(useErrorStream ? process.getErrorStream() : process.getInputStream()));
-        StringBuilder output = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            output.append(line).append("\n");
-        }
-
-        process.waitFor();
-
-        return output.toString();
-    }
-
-    private static void writeStringToFile(String content, String fileName) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            writer.write(content);
-        }
-    }
 }

@@ -3,9 +3,9 @@ package server.cps.model;
 
 public class Problem {
 
-    private Long id;
-    private String title;
-    private String description;
+    private final Long id;
+    private final String title;
+    private final String description;
 
     public Problem(Long id, String title, String description) {
         this.id = id;

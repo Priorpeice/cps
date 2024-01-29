@@ -2,7 +2,7 @@ package server.cps.model;
 
 public class CompilationResult {
     private String output;
-    private boolean isCompile;
+    private final boolean isCompile;
 
     public CompilationResult(String output, boolean isCompile) {
         this.output = output;
