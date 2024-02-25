@@ -1,18 +1,18 @@
-package server.cps.service;
+package server.cps.service.compiler;
 
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import server.cps.infra.ProcessExecutor;
-import server.cps.infra.ProcessExecutorImpl;
 import server.cps.model.CompilationResult;
 import server.cps.model.Compiler;
 
-import java.io.*;
+import java.io.IOException;
 
-
-@Service("py")
+@Component("py")
 public class PythonRunner implements Compiler {
     private final ProcessExecutor processExecutor;
-    public PythonRunner(ProcessExecutor processExecutor) {
+    @Autowired
+    public PythonRunner( ProcessExecutor processExecutor) {
         this.processExecutor = processExecutor;
     }
 

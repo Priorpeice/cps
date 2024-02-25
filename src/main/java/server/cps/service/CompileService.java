@@ -1,9 +1,10 @@
 package server.cps.service;
 
 import org.springframework.stereotype.Service;
+import server.cps.compile.dto.CompileRequestDTO;
 import server.cps.model.CompilationResult;
 import server.cps.model.Compiler;
-import server.cps.respository.FileRepository;
+import server.cps.respository.CodeRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,23 +14,22 @@ import java.util.Map;
 @Service
 public class CompileService {
     private final Map<String, Compiler> languageCompilerMap;
-    private final FileRepository fileRepository;
+    private final CodeRepository codeRepository;
 
-    public CompileService(Map<String, Compiler> languageCompilerMap, FileRepository fileRepository) {
+    public CompileService(Map<String, Compiler> languageCompilerMap, CodeRepository codeRepository) {
         this.languageCompilerMap = languageCompilerMap;
-        this.fileRepository = fileRepository;
+        this.codeRepository = codeRepository;
     }
 
-    public CompilationResult compile(String code, String language, String input) {
-        Compiler selectedCompiler = getCompilerForLanguage(language);
+    public CompilationResult compile(CompileRequestDTO compileRequestDTO) {
+        Compiler selectedCompiler = getCompilerForLanguage(compileRequestDTO.getLanguage());
         try {
             // 파일 저장
-            String fileName = fileRepository.generateFileName(language);
-            fileRepository.writeStringToFile(code, fileName);
+            String fileName = codeRepository.generateFileName(compileRequestDTO.getLanguage());
+            codeRepository.writeStringToFile(compileRequestDTO.getCode(), fileName);
 
             // 컴파일
-            CompilationResult compileResult = selectedCompiler.compile(fileName,input);
-            return compileResult;
+            return selectedCompiler.compile(fileName, compileRequestDTO.getInput());
 
         } catch (IOException | InterruptedException e) {
             String errorMessage = "Exception during compilation: " + e.getMessage();
@@ -56,25 +56,29 @@ public class CompileService {
         List<CompilationResult> runResults = new ArrayList<>();
         try {
             if (compileResult.isCompile()) {
-                List<String> inputs = fileRepository.readInputsFromFiles(problem);
-
+                List<String> inputs = codeRepository.readFilesFromFolder(problem,".in");
                 for (String input : inputs) {
                     CompilationResult runResult = selectedCompiler.run(compileResult.getOutput(), input);
                     runResults.add(runResult);
                 }
             }
+            else {
+                runResults.add(new CompilationResult("fail", false));
+            }
         } catch (IOException | InterruptedException e) {
             String errorMessage = "Exception during running: " + e.getMessage();
-            runResults.add(new CompilationResult(errorMessage, false)); // 실행 실패로 표시
+            runResults.add(new CompilationResult(errorMessage, false));
         }
         return runResults;
     }
 
-    private Compiler getCompilerForLanguage(String language) {
+    public Compiler getCompilerForLanguage(String language) {
+
         Compiler compiler= languageCompilerMap.get(language);
+        System.out.println(compiler);
         if(compiler !=null){
             return compiler;
         }
-        throw new IllegalArgumentException("Unsupported Language" + language);
+        throw new IllegalArgumentException("Unsupported Language " + language);
     }
 }

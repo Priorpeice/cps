@@ -1,27 +1,26 @@
-package server.cps.service;
+package server.cps.service.compiler;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-
+import org.springframework.stereotype.Component;
 import server.cps.infra.ProcessExecutor;
 import server.cps.model.CompilationResult;
 import server.cps.model.Compiler;
-import java.io.*;
 
-@Service("c")
-public class CCompiler implements Compiler {
-    @Autowired
+import java.io.IOException;
+
+
+@Component("cpp")
+public class CppCompiler implements Compiler {
+
     private final ProcessExecutor processExecutor;
-
-    public CCompiler(ProcessExecutor processExecutor) {
-        this.processExecutor =processExecutor;
+    @Autowired
+    public CppCompiler(ProcessExecutor processExecutor) {
+        this.processExecutor = processExecutor;
     }
-
 
     @Override
     public CompilationResult compile(String fileName, String input) throws IOException, InterruptedException {
-        String compileCommand = "gcc " + fileName + " -o temp";
+        String compileCommand = "gcc++ " + fileName + " -o temp";
         CompilationResult compilationResult = processExecutor.executeCommand(compileCommand.split("\\s+"), input);
 
         if (!compilationResult.isCompile() || compilationResult.getOutput().contains("error")) {
@@ -37,5 +36,7 @@ public class CCompiler implements Compiler {
 
         return processExecutor.executeCommand(new String[] { runCommand }, input);
     }
+
+
 
 }

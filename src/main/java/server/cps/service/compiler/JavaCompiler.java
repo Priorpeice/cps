@@ -1,19 +1,18 @@
-package server.cps.service;
+package server.cps.service.compiler;
 
-import org.springframework.stereotype.Service;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import server.cps.infra.ProcessExecutor;
 import server.cps.model.CompilationResult;
 import server.cps.model.Compiler;
 
 import javax.tools.*;
-import java.io.*;
-
-
-@Service("java")
+import java.io.IOException;
+@Component("java")
 public class JavaCompiler implements Compiler {
     private final ProcessExecutor processExecutor;
-    public JavaCompiler(ProcessExecutor processExecutor) {
+    @Autowired
+    public JavaCompiler( ProcessExecutor processExecutor) {
         this.processExecutor=processExecutor;
     }
 
