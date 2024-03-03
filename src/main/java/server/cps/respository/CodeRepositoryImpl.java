@@ -22,7 +22,7 @@ public class CodeRepositoryImpl implements CodeRepository {
     }
     @Override
     public String generateFileName(String fileExtension) {
-        return "Main." + fileExtension;
+        return "Main";
     }
     public List<String> readFilesFromFolder(String problemNumber, String fileExtension) throws IOException {
         List<String> fileContents = new ArrayList<>();

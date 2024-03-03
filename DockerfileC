@@ -1,0 +1,16 @@
+# 기존 내용은 유지하되, 각 단계에서 출력을 최소화합니다.
+
+# Step 1: gcc:latest 이미지를 사용합니다.
+FROM gcc:latest
+
+# Step 2: 작업 디렉토리 설정
+WORKDIR /usr/src/app
+
+# Step 3: 소스 코드 복사
+COPY myprogram.c .
+
+# Step 4: 소스 코드 컴파일
+RUN gcc -o myprogram myprogram.c
+
+# Step 5: 실행 파일 실행
+CMD ["./myprogram"]
