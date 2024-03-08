@@ -1,5 +1,6 @@
 package server.cps.service.compiler;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import server.cps.dto.compile.Command;
 import server.cps.dto.compile.CompileRequestDTO;
@@ -11,13 +12,15 @@ import server.cps.respository.DockerRepository;
 
 import java.io.IOException;
 
-@Component("py")
-public class PythonRunner implements CompilerService {
+
+@Component("cpp")
+public class CppCompilerService implements CompilerService {
+
     private final ProcessExecutor processExecutor;
     private final CodeRepository codeRepository;
     private final DockerRepository dockerRepository;
-
-    public PythonRunner(ProcessExecutor processExecutor, CodeRepository codeRepository, DockerRepository dockerRepository) {
+    @Autowired
+    public CppCompilerService(ProcessExecutor processExecutor, CodeRepository codeRepository, DockerRepository dockerRepository) {
         this.processExecutor = processExecutor;
         this.codeRepository = codeRepository;
         this.dockerRepository = dockerRepository;
@@ -26,7 +29,7 @@ public class PythonRunner implements CompilerService {
     @Override
     public CompilationResult compileAndRun(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
         codeRepository.save(compileRequestDTO);
-        compileRequestDTO.setCommand(command("python" , ".py",".in" , "","python3 "+compileRequestDTO.getUserName()+".py"));
+        compileRequestDTO.setCommand(command("gcc" , ".cpp",".in" , "RUN g++ -o " + compileRequestDTO.getUserName()+" "+ compileRequestDTO.getUserName()+".cpp || exit 1","./"+compileRequestDTO.getUserName()));
         compileRequestDTO.setFile(dockerRepository.generateDockerfile(compileRequestDTO));
         CompilationResult compilationResult = processExecutor.executeCompile(compileRequestDTO);
         if(compilationResult.isCompile()){
@@ -41,5 +44,9 @@ public class PythonRunner implements CompilerService {
         command.setRunCommand(runCommand);
         return command;
     }
+
+
+
+
 
 }

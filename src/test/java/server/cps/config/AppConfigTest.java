@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import server.cps.model.Compiler;
+import server.cps.service.CompilerService;
 
 @SpringBootTest
 public class AppConfigTest {
@@ -14,8 +14,8 @@ public class AppConfigTest {
 
     @Test
     public void printCompilerBeans() {
-        Compiler cCompiler1 = context.getBean("c", Compiler.class);
-        Compiler cCompiler2 = context.getBean("c", Compiler.class);
+        CompilerService cCompiler1 = context.getBean("c", CompilerService.class);
+        CompilerService cCompiler2 = context.getBean("c", CompilerService.class);
 
         System.out.println("cCompiler1: " + cCompiler1);
         System.out.println("cCompiler2: " + cCompiler2);

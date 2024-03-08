@@ -1,60 +1,68 @@
 package server.cps.infra;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.exception.DockerClientException;
 import com.github.dockerjava.api.model.BuildResponseItem;
 import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.github.dockerjava.core.command.LogContainerResultCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import server.cps.dto.compile.CompileRequestDTO;
 import server.cps.model.CompilationResult;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class DockerExecutor {
+public class DockerExecutor implements ProcessExecutor{
     private final DockerClient dockerClient;
     private CompilationResult compilationResult;
     @Autowired
     public DockerExecutor(DockerClient dockerClient) {
         this.dockerClient = dockerClient;
     }
-    public CompilationResult buildImage(File dockerfile) {
+    private CompilationResult buildImage(File dockerfile) {
+        StringBuilder log = new StringBuilder();
         String projectDirectory = System.getProperty("user.dir");
-        // 코드와 입력값을 파일로 저장
         BuildImageResultCallback buildCallback = new BuildImageResultCallback() {
             @Override
             public void onNext(BuildResponseItem item) {
                 super.onNext(item);
                 // 빌드 로그 출력
-//                System.out.println(item.getStream());
+                System.out.println(item.getStream());
+                log.append(item.getStream());
 
                 // 에러 메시지 출력
                 if (item.isErrorIndicated()) {
-                    System.err.println("Error during image build: " + item.getErrorDetail().getMessage());
-                    compilationResult = new CompilationResult( item.getErrorDetail().getMessage(),false);
+                    String errorMessage = item.getErrorDetail().getMessage();
+                    System.err.println("Error during image build: " + errorMessage);
+                    compilationResult = new CompilationResult(log.toString(), false);
+                    }
                 }
-            }
         };
+        try {
+            String buildImageId = dockerClient.buildImageCmd()
+                    .withDockerfile(dockerfile)
+                    .withBaseDirectory(new File(projectDirectory))
+                    .exec(buildCallback)
+                    .awaitImageId();
 
-        String buildImageId = dockerClient.buildImageCmd()
-                .withDockerfile(dockerfile)
-                .withBaseDirectory(new File(projectDirectory))
-                .exec(buildCallback)
-                .awaitImageId();
-
-        System.out.println("Built Docker image ID: " + buildImageId);
-        if (compilationResult == null) {
+            System.out.println("Built Docker image ID: " + buildImageId);
+//        if (compilationResult == null) {
             compilationResult = new CompilationResult(buildImageId, true);
+//        }
+            return compilationResult;
         }
-        return compilationResult;
-
+        catch (DockerClientException e){
+            return compilationResult;
+        }
     }
-    public CompilationResult runContainer(CompilationResult compilationResult,String codeName,String input, String language) throws InterruptedException {
+    private CompilationResult runContainer(CompilationResult compilationResult,String runCommand ,String userName) throws InterruptedException {
 
         String containerId = dockerClient.createContainerCmd(compilationResult.getOutput())
-                .withCmd("sh", "-c", getExecutionCommand(language, codeName, input))
+                .withCmd("sh","-c",runCommand)
                 .exec()
                 .getId();
         // Docker 컨테이너 시작
@@ -70,13 +78,7 @@ public class DockerExecutor {
                     @Override
                     public void onNext(Frame item) {
                         String frameContent = item.toString();
-                        result.append(frameContent);
-
-                        // 'ls' 명령어 실행 결과만 출력
-                        if (frameContent.contains("ls")) {
-                            System.out.println("ls Result:\n" + frameContent);
-                        }
-
+                        result.append(preprocessLog(frameContent));
                     }
                 })
                 .awaitCompletion(30, TimeUnit.SECONDS);
@@ -85,20 +87,36 @@ public class DockerExecutor {
         System.out.println("Container Logs:\n" + result);
         // 컨테이너 제거
         dockerClient.removeContainerCmd(containerId).exec();
+        result.deleteCharAt(0);
         return new CompilationResult(result.toString(),true);
     }
     private String getExecutionCommand(String language, String codeName, String input) {
         switch (language) {
             case "java":
-                return "java "+"echo \"" + input + "\" | ./"+codeName;
+                return "java "+codeName;
             case "c++":
             case "c":
-                return "echo \"" + input + "\" | ./"+codeName;
-            case "python":
-                return "python " + codeName+".py";
+                return "./"+codeName;
+            case "py":
+                return "python3 " + codeName + ".py";
+            case "js":
+                return "node "+codeName +".js";
             default:
                 return "";
         }
+    }
+
+    @Override
+    public CompilationResult executeCompile(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
+        return buildImage(compileRequestDTO.getFile());
+    }
+    @Override
+    public CompilationResult executeRun(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
+        return runContainer(compilationResult,compileRequestDTO.getCommand().getRunCommand(), compileRequestDTO.getUserName());
+    }
+    private static String preprocessLog(String logEntry) {
+        // 특정 문자열이 포함되어 있으면 빈 문자열로 대체
+        return logEntry.replace("STDOUT:", "\n");
     }
 }
 

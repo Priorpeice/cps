@@ -1,10 +1,11 @@
 package server.cps.respository;
 
-import java.io.IOException;
+import server.cps.dto.compile.CompileRequestDTO;
+import server.cps.dto.problem.ProblemRequstDTO;
+
 import java.util.List;
 
-public interface CodeRepository {
-    public void writeStringToFile(String content, String fileName) throws IOException;
-    public String generateFileName(String fileExtension);
-    public List<String> readFilesFromFolder(String problemNumber, String fileExtension) throws IOException;
+public interface CodeRepository<T> {
+    void save (CompileRequestDTO compileRequestDTO);
+    List <T> readFilesFromFolder(ProblemRequstDTO problemRequstDTO) ;
 }

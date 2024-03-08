@@ -1,7 +1,9 @@
 package server.cps.respository;
 
+import server.cps.dto.compile.CompileRequestDTO;
+
 import java.io.File;
 
 public interface DockerRepository {
-    public File generateDockerfile(String language, String codeName, String inputPath, String fileName);
+    public File generateDockerfile(CompileRequestDTO compileRequestDTO);
 }

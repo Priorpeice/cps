@@ -1,7 +1,7 @@
 package server.cps.respository.problem;
 
 import org.springframework.stereotype.Component;
-import server.cps.model.Problem;
+import server.cps.dto.problem.Problem;
 
 import java.util.ArrayList;
 import java.util.List;

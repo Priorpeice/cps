@@ -1,21 +1,28 @@
 package server.cps.infra;
 
-import org.springframework.stereotype.Component;
+import server.cps.dto.compile.CompileRequestDTO;
 import server.cps.model.CompilationResult;
 
 import java.io.*;
 
-@Component
+
 public class ProcessExecutorImpl implements ProcessExecutor {
-    public  CompilationResult executeCommand(String[] command, String input) throws IOException, InterruptedException {
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
+    public  CompilationResult executeCompile(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
+        return executeCommand(compileRequestDTO);
+    }
+    @Override
+    public CompilationResult executeRun(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
+        return executeCommand(compileRequestDTO);
+    }
+    private CompilationResult executeCommand(CompileRequestDTO compileRequestDTO) throws  IOException, InterruptedException{
+        ProcessBuilder processBuilder = new ProcessBuilder(compileRequestDTO.getCommand().getCompileCommand());
         processBuilder.redirectErrorStream(true);
 
         Process process = processBuilder.start();
 
-        if (input != null && !input.isEmpty()) {
+        if (compileRequestDTO.getInput() != null && !compileRequestDTO.getInput().isEmpty()) {
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()))) {
-                writer.write(input);
+                writer.write(compileRequestDTO.getInput());
                 writer.flush();
             }
         }

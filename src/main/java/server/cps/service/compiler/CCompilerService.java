@@ -1,5 +1,6 @@
 package server.cps.service.compiler;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import server.cps.dto.compile.Command;
 import server.cps.dto.compile.CompileRequestDTO;
@@ -11,35 +12,36 @@ import server.cps.respository.DockerRepository;
 
 import java.io.IOException;
 
-@Component("py")
-public class PythonRunner implements CompilerService {
+@Component("c")
+public class CCompilerService implements CompilerService  {
+
     private final ProcessExecutor processExecutor;
     private final CodeRepository codeRepository;
     private final DockerRepository dockerRepository;
-
-    public PythonRunner(ProcessExecutor processExecutor, CodeRepository codeRepository, DockerRepository dockerRepository) {
-        this.processExecutor = processExecutor;
-        this.codeRepository = codeRepository;
-        this.dockerRepository = dockerRepository;
+    @Autowired
+    public CCompilerService(ProcessExecutor processExecutor, CodeRepository codeRepository ,DockerRepository dockerRepository) {
+        this.processExecutor =processExecutor;
+        this.codeRepository= codeRepository;
+        this.dockerRepository= dockerRepository;
     }
-
     @Override
     public CompilationResult compileAndRun(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
         codeRepository.save(compileRequestDTO);
-        compileRequestDTO.setCommand(command("python" , ".py",".in" , "","python3 "+compileRequestDTO.getUserName()+".py"));
+        compileRequestDTO.setCommand(command("gcc" , ".c",".in" , "RUN gcc -o " + compileRequestDTO.getUserName()+" "+ compileRequestDTO.getUserName()+".c || exit 1","./"+compileRequestDTO.getUserName()));
         compileRequestDTO.setFile(dockerRepository.generateDockerfile(compileRequestDTO));
         CompilationResult compilationResult = processExecutor.executeCompile(compileRequestDTO);
         if(compilationResult.isCompile()){
-            return processExecutor.executeRun(compileRequestDTO);
+           return processExecutor.executeRun(compileRequestDTO);
         }
         return compilationResult;
     }
 
-    private Command command(String imageCommand, String fileExtension, String inputExtension, String compileCommand , String runCommand ){
+    private Command command(String imageCommand, String fileExtension, String inputExtension, String compileCommand ,String runCommand ){
         Command command =new Command(imageCommand,fileExtension,inputExtension);
         command.setCompileCommand(compileCommand);
         command.setRunCommand(runCommand);
         return command;
     }
+
 
 }

@@ -1,6 +1,8 @@
 package server.cps.respository;
 
 import org.springframework.stereotype.Repository;
+import server.cps.dto.compile.CompileRequestDTO;
+import server.cps.dto.problem.ProblemRequstDTO;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -16,15 +18,30 @@ import java.util.stream.Collectors;
 
 @Repository
 public class CodeRepositoryImpl implements CodeRepository {
+
     @Override
-    public void writeStringToFile(String content, String fileName) throws IOException {
+    public void save(CompileRequestDTO compileRequestDTO) {
+
+        try {
+            makeFile(compileRequestDTO.getCode() , generateFileName(compileRequestDTO.getUserName(), compileRequestDTO.getLanguage()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List readFilesFromFolder(ProblemRequstDTO problemRequstDTO) {
+        return readFilesFromFolder(problemRequstDTO.getProblem().getId().toString(),problemRequstDTO.getLanguage());
+    }
+
+    private void makeFile(String content, String fileName) throws IOException {
         Files.write(Paths.get(fileName), Collections.singleton(content), StandardCharsets.UTF_8);
     }
-    @Override
-    public String generateFileName(String fileExtension) {
-        return "Main";
+    private String generateFileName(String userName,String fileExtension) {
+        return userName+"."+fileExtension;
     }
-    public List<String> readFilesFromFolder(String problemNumber, String fileExtension) throws IOException {
+
+    public List<String> readFilesFromFolder(String problemNumber, String fileExtension)  {
         List<String> fileContents = new ArrayList<>();
         String folderPath = "testData/" + problemNumber + "/";
 

@@ -2,7 +2,7 @@ package server.cps.respository.problem;
 
 
 
-import server.cps.model.Problem;
+import server.cps.dto.problem.Problem;
 
 import java.util.List;
 

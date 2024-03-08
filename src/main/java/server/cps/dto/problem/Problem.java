@@ -1,4 +1,4 @@
-package server.cps.model;
+package server.cps.dto.problem;
 // 문제 클래스
 
 
