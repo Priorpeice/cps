@@ -14,6 +14,7 @@ public class CompileRequestDTO {
     private Command command;
     private String userName;
     private File file;
+    private String folderPath;
     public CompileRequestDTO(String code, String language, String input) {
         this.code = code;
         this.language = language;

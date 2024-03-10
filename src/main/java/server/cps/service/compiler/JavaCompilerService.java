@@ -4,13 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import server.cps.dto.compile.Command;
 import server.cps.dto.compile.CompileRequestDTO;
+import server.cps.dto.problem.ProblemRequstDTO;
 import server.cps.infra.ProcessExecutor;
 import server.cps.model.CompilationResult;
-import server.cps.service.CompilerService;
 import server.cps.respository.CodeRepository;
 import server.cps.respository.DockerRepository;
+import server.cps.service.CompilerService;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 @Component("java")
 public class JavaCompilerService implements CompilerService {
     private final ProcessExecutor processExecutor;
@@ -25,14 +30,36 @@ public class JavaCompilerService implements CompilerService {
 
     @Override
     public CompilationResult compileAndRun(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
-        codeRepository.save(compileRequestDTO);
-        compileRequestDTO.setCommand(command("openjdk" , ".java",".in" , "RUN javac Main.java || exit 1","java Main"));
-        compileRequestDTO.setFile(dockerRepository.generateDockerfile(compileRequestDTO));
-        CompilationResult compilationResult = processExecutor.executeCompile(compileRequestDTO);
+        compileRequestDTO.setFolderPath(codeRepository.getFolder(compileRequestDTO.getUserName()));
+        codeRepository.codeSave(compileRequestDTO.getCode(),compileRequestDTO.getUserName(),compileRequestDTO.getLanguage());
+        compileRequestDTO.setCommand(command("openjdk:latest" , ".java",".in" , "RUN javac Main.java || exit 1","java Main"));
+        if(!compileRequestDTO.getInput().isEmpty()){
+            codeRepository.inputSave(compileRequestDTO.getInput(),compileRequestDTO.getUserName());
+            compileRequestDTO.getCommand().setRunCommand("java Main"+"<"+compileRequestDTO.getUserName()+".in");
+        }
+        compileRequestDTO.setFile(dockerRepository.compileDockerfile(compileRequestDTO));
+        CompilationResult compilationResult = processExecutor.executeCompile(compileRequestDTO.getFile());
         if(compilationResult.isCompile()){
             return processExecutor.executeRun(compileRequestDTO);
         }
         return compilationResult;
+    }
+
+    @Override
+    public List<CompilationResult> testAndRun(ProblemRequstDTO problemRequstDTO) throws InterruptedException, IOException {
+        problemRequstDTO.setFolderPath(codeRepository.getFolder(problemRequstDTO.getUserName()));
+        codeRepository.codeSave(problemRequstDTO.getCode(),problemRequstDTO.getUserName(),problemRequstDTO.getLanguage());
+        problemRequstDTO.setCommand(command("openjdk:23-slim-bullseye" , ".java",".in" , "RUN javac Main.java || exit 1","time -p java Main"));
+        problemRequstDTO.setNumberOfFile(codeRepository.countFile(problemRequstDTO.getProblemId(), ".in"));
+        File file =dockerRepository.compileDockerfile(problemRequstDTO);
+        CompilationResult compilationResult = processExecutor.executeCompile(file);
+        List<CompilationResult> compilationResults = new ArrayList<>();
+        if(compilationResult.isCompile()) {
+            compilationResults = processExecutor.executeRuns(problemRequstDTO);
+        }else{
+            compilationResults.add(compilationResult);
+        }
+        return compilationResults;
     }
 
     private Command command(String imageCommand, String fileExtension, String inputExtension, String compileCommand , String runCommand ){

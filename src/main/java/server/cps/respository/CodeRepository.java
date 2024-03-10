@@ -1,11 +1,11 @@
 package server.cps.respository;
 
-import server.cps.dto.compile.CompileRequestDTO;
-import server.cps.dto.problem.ProblemRequstDTO;
-
 import java.util.List;
 
 public interface CodeRepository<T> {
-    void save (CompileRequestDTO compileRequestDTO);
-    List <T> readFilesFromFolder(ProblemRequstDTO problemRequstDTO) ;
+    void codeSave(String code, String userName, String language);
+    void inputSave(String input, String userName);
+    List <T> readFilesFromFolder(String problemId) ;
+    int countFile(String problemId ,String extension);
+    String getFolder(String userName);
 }
