@@ -1,4 +1,4 @@
-package server.cps.service;
+package server.cps.compile.compiler;
 
 import server.cps.dto.compile.CompileRequestDTO;
 import server.cps.dto.problem.ProblemRequstDTO;

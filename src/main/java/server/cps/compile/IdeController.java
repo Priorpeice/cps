@@ -1,4 +1,4 @@
-package server.cps.controller;
+package server.cps.compile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import server.cps.dto.compile.CompileRequestDTO;
 import server.cps.model.CompilationResult;
-import server.cps.service.CompilerSelectService;
+import server.cps.compile.CompilerSelectService;
 
 import java.io.IOException;
 

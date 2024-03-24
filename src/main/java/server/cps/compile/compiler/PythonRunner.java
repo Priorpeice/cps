@@ -1,6 +1,5 @@
-package server.cps.service.compiler;
+package server.cps.compile.compiler;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import server.cps.dto.compile.Command;
 import server.cps.dto.compile.CompileRequestDTO;
@@ -9,58 +8,55 @@ import server.cps.infra.ProcessExecutor;
 import server.cps.model.CompilationResult;
 import server.cps.respository.CodeRepository;
 import server.cps.respository.DockerRepository;
-import server.cps.service.CompilerService;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component("c")
-public class CCompilerService implements CompilerService  {
-
+@Component("py")
+public class PythonRunner implements CompilerService {
     private final ProcessExecutor processExecutor;
     private final CodeRepository codeRepository;
     private final DockerRepository dockerRepository;
-    @Autowired
-    public CCompilerService(ProcessExecutor processExecutor, CodeRepository codeRepository ,DockerRepository dockerRepository) {
-        this.processExecutor =processExecutor;
-        this.codeRepository= codeRepository;
-        this.dockerRepository= dockerRepository;
+
+    public PythonRunner(ProcessExecutor processExecutor, CodeRepository codeRepository, DockerRepository dockerRepository) {
+        this.processExecutor = processExecutor;
+        this.codeRepository = codeRepository;
+        this.dockerRepository = dockerRepository;
     }
+
     @Override
     public CompilationResult compileAndRun(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
         compileRequestDTO.setFolderPath(codeRepository.getFolder(compileRequestDTO.getUserName()));
         codeRepository.codeSave(compileRequestDTO.getCode(),compileRequestDTO.getUserName(),compileRequestDTO.getLanguage());
-        compileRequestDTO.setCommand(command("gcc:latest" , ".c",".in" , "RUN gcc -o " + compileRequestDTO.getUserName()+" "+ compileRequestDTO.getUserName()+".c || exit 1","./"+compileRequestDTO.getUserName()));
+        compileRequestDTO.setCommand(command("python:latest" , ".py",".in" , "","time -p python3 "+compileRequestDTO.getUserName()+".py"));
         if(!compileRequestDTO.getInput().isEmpty()){
             codeRepository.inputSave(compileRequestDTO.getInput(),compileRequestDTO.getUserName());
-            compileRequestDTO.getCommand().setRunCommand("./"+compileRequestDTO.getUserName()+" < "+compileRequestDTO.getUserName()+".in");
+            compileRequestDTO.getCommand().setRunCommand("python3 "+compileRequestDTO.getUserName()+".py"+"<"+compileRequestDTO.getUserName()+".in");
         }
         compileRequestDTO.setFile(dockerRepository.compileDockerfile(compileRequestDTO));
         CompilationResult compilationResult = processExecutor.executeCompile(compileRequestDTO.getFile());
         if(compilationResult.isCompile()){
-           return processExecutor.executeRun(compileRequestDTO);
+            return processExecutor.executeRun(compileRequestDTO);
         }
         return compilationResult;
     }
 
     @Override
-    public List<CompilationResult> testAndRun(ProblemRequstDTO problemRequstDTO) throws IOException,InterruptedException{
+    public List<CompilationResult> testAndRun(ProblemRequstDTO problemRequstDTO) throws InterruptedException, IOException {
         problemRequstDTO.setFolderPath(codeRepository.getFolder(problemRequstDTO.getUserName()));
         codeRepository.codeSave(problemRequstDTO.getCode(),problemRequstDTO.getUserName(),problemRequstDTO.getLanguage());
-        problemRequstDTO.setCommand(command("gcc:latest" , ".c",".in" , "RUN gcc -o " + problemRequstDTO.getUserName()+" "+ problemRequstDTO.getUserName()+".c || exit 1","time -p ./"+problemRequstDTO.getUserName()));
-        problemRequstDTO.setNumberOfFile(codeRepository.countFile(problemRequstDTO.getProblemId(), ".in"));
+        problemRequstDTO.setCommand(command("python:latest" , ".py",".in" , "","python3 "+problemRequstDTO.getUserName()+".py"));
         File file =dockerRepository.compileDockerfile(problemRequstDTO);
         CompilationResult compilationResult = processExecutor.executeCompile(file);
         List<CompilationResult> compilationResults = new ArrayList<>();
         if(compilationResult.isCompile()) {
-             compilationResults = processExecutor.executeRuns(problemRequstDTO);
+            compilationResults = processExecutor.executeRuns(problemRequstDTO);
         }else{
             compilationResults.add(compilationResult);
         }
         return compilationResults;
-
     }
 
     private Command command(String imageCommand, String fileExtension, String inputExtension, String compileCommand , String runCommand ){
@@ -69,6 +65,5 @@ public class CCompilerService implements CompilerService  {
         command.setRunCommand(runCommand);
         return command;
     }
-
 
 }

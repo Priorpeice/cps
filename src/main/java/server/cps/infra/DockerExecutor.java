@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -110,7 +111,16 @@ public class DockerExecutor implements ProcessExecutor{
             System.out.println("Container Logs:\n" + stdOutResult);
             // 컨테이너 제거
             System.out.println("Standard Error:\n" + stdErrResult);
-            dockerClient.removeContainerCmd(containerId).exec();
+            CompletableFuture<Void> containerRemovalFuture = CompletableFuture.runAsync(() -> {
+                // 컨테이너 삭제
+                dockerClient.removeContainerCmd(containerId).exec();
+            });
+
+// 컨테이너 삭제가 완료되면 이미지 삭제 실행
+            containerRemovalFuture.thenRun(() -> {
+                // 이미지 삭제
+                dockerClient.removeImageCmd(compilationResult.getOutput()).exec();
+            });
 
             stdOutResult.deleteCharAt(0);
             finalCompilationResult = new CompilationResult(stdOutResult.toString(), true);
@@ -177,6 +187,7 @@ public class DockerExecutor implements ProcessExecutor{
         // 특정 문자열이 포함되어 있으면 빈 문자열로 대체
         return logEntry.replace("STDERR:", "");
     }
+
 
 }
 

@@ -24,10 +24,11 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    //implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'com.github.docker-java:docker-java-core:3.3.5'
     implementation 'com.github.docker-java:docker-java-transport-httpclient5:3.3.5'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'mysql:mysql-connector-java:8.0.31'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'

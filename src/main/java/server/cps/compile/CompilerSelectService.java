@@ -1,7 +1,8 @@
-package server.cps.service;
+package server.cps.compile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import server.cps.compile.compiler.CompilerService;
 
 import java.util.Map;
 @Service

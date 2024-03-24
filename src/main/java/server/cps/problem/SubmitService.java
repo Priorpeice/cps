@@ -1,24 +1,22 @@
-package server.cps.service;
+package server.cps.problem;
 
 import org.springframework.stereotype.Service;
-import server.cps.dto.problem.Problem;
 import server.cps.dto.problem.ProblemRequstDTO;
 import server.cps.model.CompilationResult;
 import server.cps.model.SubmissionResult;
 import server.cps.respository.CodeRepository;
-import server.cps.respository.problem.ProblemRespository;
 
 import java.util.List;
 
 @Service
 public class SubmitService {
     private final CodeRepository codeRepository;
-    private final ProblemRespository problemRespository;
+//    private final ProblemRespository problemRespository;
 
 
-    public SubmitService(CodeRepository codeRepository , ProblemRespository problemRespository) {
+    public SubmitService(CodeRepository codeRepository ) {
         this.codeRepository = codeRepository;
-        this.problemRespository = problemRespository;
+
     }
     // 수정 필요
 
@@ -65,11 +63,6 @@ public class SubmitService {
         // 기본값 또는 예외 처리를 원하는 방식으로 설정
         return 0.0;
     }
-    public void createProblem(Problem problem){
-        problemRespository.createProblem(problem);
-    }
-    public List<Problem>getAllProblems(){
-        return problemRespository.getAllProblems();
-    }
+
 }
 

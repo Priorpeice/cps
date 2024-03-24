@@ -1,4 +1,4 @@
-package server.cps.service.compiler;
+package server.cps.compile.compiler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,6 @@ import server.cps.infra.ProcessExecutor;
 import server.cps.model.CompilationResult;
 import server.cps.respository.CodeRepository;
 import server.cps.respository.DockerRepository;
-import server.cps.service.CompilerService;
 
 import java.io.File;
 import java.io.IOException;
