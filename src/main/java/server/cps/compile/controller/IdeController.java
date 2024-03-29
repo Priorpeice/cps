@@ -1,0 +1,50 @@
+package server.cps.compile.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import server.cps.common.CpsResponse;
+import server.cps.common.ResoponseBody;
+import server.cps.common.Status;
+import server.cps.compile.service.CompilerSelectService;
+import server.cps.compile.dto.CompileRequestDTO;
+import server.cps.model.CompilationResult;
+
+import java.io.IOException;
+
+@RestController
+@CrossOrigin
+public class IdeController {
+//    @Autowired
+//    private CompileService compileService;
+
+    @Autowired
+    private CompilerSelectService compilerSelectService;
+
+//    @GetMapping("/ide")
+//    public String ide(){
+//        return "ide";
+//    }
+    @PostMapping("/api/compile")
+    public ResponseEntity<ResoponseBody<CompilationResult>> compileCode(@RequestBody CompileRequestDTO compileRequest) {
+        compileRequest.setUserName("Test");
+        try {
+            CompilationResult result = compilerSelectService.getCompilerForLanguage(compileRequest.getLanguage()).compileAndRun(compileRequest);
+            return CpsResponse.toResponse(Status.RUN, result);
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+//@PostMapping("/api/compile")
+//public CompilationResult compileCode(@RequestBody CompileRequestDTO compileRequest) {
+//    // compile 및 실행 로직
+//    CompilationResult c = testService.compile(compileRequest);
+//    return testService.run(c, compileRequest.getInput(),compileRequest.getLanguage()); // JSON 형식의 데이터를 반환
+//}
+
+}
+

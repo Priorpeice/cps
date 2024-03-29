@@ -9,8 +9,8 @@ import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.github.dockerjava.core.command.LogContainerResultCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import server.cps.dto.compile.CompileRequestDTO;
-import server.cps.dto.problem.ProblemRequstDTO;
+import server.cps.compile.dto.CompileRequestDTO;
+import server.cps.problem.dto.ProblemRequstDTO;
 import server.cps.model.CompilationResult;
 
 import java.io.File;

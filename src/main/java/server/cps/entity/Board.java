@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)//접근 레벨 프로텍ㅊ
+@EntityListeners(AuditingEntityListener.class)
 // 등록 날짜 수정 날짜 추가
 public class Board {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,6 +51,13 @@ public class Board {
         this.title = title;
         this.content = content;
         return this;
+    }
+
+    @Builder
+    public Board(String title, String content){
+        this.title = title;
+        this.content = content;
+        this.viewCount = 0L;
     }
 
 

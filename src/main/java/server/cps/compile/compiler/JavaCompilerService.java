@@ -2,13 +2,13 @@ package server.cps.compile.compiler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import server.cps.dto.compile.Command;
-import server.cps.dto.compile.CompileRequestDTO;
-import server.cps.dto.problem.ProblemRequstDTO;
+import server.cps.compile.dto.Command;
+import server.cps.compile.dto.CompileRequestDTO;
+import server.cps.problem.dto.ProblemRequstDTO;
 import server.cps.infra.ProcessExecutor;
 import server.cps.model.CompilationResult;
-import server.cps.respository.CodeRepository;
-import server.cps.respository.DockerRepository;
+import server.cps.compile.repository.CodeRepository;
+import server.cps.compile.repository.DockerRepository;
 
 import java.io.File;
 import java.io.IOException;
