@@ -1,4 +1,4 @@
-package server.cps.board;
+package server.cps.board.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
