@@ -8,9 +8,10 @@ import java.util.List;
 
 public interface BoardService {
     Board saveBoard(BoardRequestDto boardRequestDto);
-    Board showBoard(Long id);
-   List<Board> showBoardAll();
-   List<Board> searchBoards(BoardSerachRequestDTO boardSerachRequestDTO);
-   void deleteBoard(Long id) ;
+    Board findBoard(Long id);
+    Board updateBoard(Long id, BoardRequestDto boardRequestDto);
+    List<Board> showBoardAll();
+    List<Board> searchBoards(BoardSerachRequestDTO boardSerachRequestDTO);
+    void deleteBoard(Long id) ;
 
 }

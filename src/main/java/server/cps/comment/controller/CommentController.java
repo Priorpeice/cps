@@ -18,13 +18,19 @@ public class CommentController {
     /**/
     @PostMapping("/api/board/{boardId}")
     public Comment createComment(@RequestBody CommentRequestDto commentRequestDto , @PathVariable Long boardId){
-        Board board =boardService.showBoard(boardId);
+        Board board =boardService.findBoard(boardId);
         Comment comment = commentService.saveComment(commentRequestDto,board);
         return comment;
     } @GetMapping("/api/board/{boardId}/{commentId}")
     public  Comment deleteComment(@PathVariable Long commentId){
         commentService.deleteComment(commentId);
         return null;
+    }
+
+    @GetMapping("/api/comment/{commentId}")
+    public  Comment showComment(@PathVariable Long commentId)
+    {
+        return commentService.showComment(commentId);
     }
 
 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ProblemRequstDTO {
+public class SubmissionRequstDTO {
     private final String code;
     private final String language;
     private final String problemId;
@@ -19,7 +19,7 @@ public class ProblemRequstDTO {
     private int numberOfFile;
     private List<CompilationResult> compilationResults;
 
-    public ProblemRequstDTO(String code, String language, String problemId) {
+    public SubmissionRequstDTO(String code, String language, String problemId) {
         this.code = code;
         this.language = language;
         this.problemId = problemId;

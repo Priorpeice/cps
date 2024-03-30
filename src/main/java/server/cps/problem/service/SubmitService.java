@@ -1,7 +1,7 @@
 package server.cps.problem.service;
 
 import org.springframework.stereotype.Service;
-import server.cps.problem.dto.ProblemRequstDTO;
+import server.cps.problem.dto.SubmissionRequstDTO;
 import server.cps.model.CompilationResult;
 import server.cps.model.SubmissionResult;
 import server.cps.compile.repository.CodeRepository;
@@ -23,30 +23,30 @@ public class SubmitService {
     // 1. 테스트로 받아온 결과 채점 시스템 구현
     //
 
-    public SubmissionResult mark(ProblemRequstDTO problemRequstDTO) {
+    public SubmissionResult mark(SubmissionRequstDTO submissionRequstDTO) {
         int totalScore = 0;
 
-        List<String> expectedOutputs = codeRepository.readFilesFromFolder(problemRequstDTO.getProblemId());
+        List<String> expectedOutputs = codeRepository.readFilesFromFolder(submissionRequstDTO.getProblemId());
 
-        for (int i = 0; i < problemRequstDTO.getCompilationResults().size(); i++) {
-            CompilationResult compileResult = problemRequstDTO.getCompilationResults().get(i);
+        for (int i = 0; i < submissionRequstDTO.getCompilationResults().size(); i++) {
+            CompilationResult compileResult = submissionRequstDTO.getCompilationResults().get(i);
             //시간 정하기
             double max= 3;
             double runningTime= extractRealTime(compileResult.getRunTime());
             String expectedOutput = expectedOutputs.get(i);
             if(max<=runningTime){
-                return new SubmissionResult(problemRequstDTO.getCompilationResults(),totalScore,false);
+                return new SubmissionResult(submissionRequstDTO.getCompilationResults(),totalScore,false);
             }
             if (compileResult.isCompile() && compileResult.getOutput().trim().equals(expectedOutput.trim())) {
 
                 totalScore += 10; // 일단 문제당 10점 부여
             }
             else{
-                return new SubmissionResult(problemRequstDTO.getCompilationResults(),totalScore,false);
+                return new SubmissionResult(submissionRequstDTO.getCompilationResults(),totalScore,false);
             }
         }
         // SubmissionResult 객체 생성
-        return new SubmissionResult(problemRequstDTO.getCompilationResults(), totalScore,true);
+        return new SubmissionResult(submissionRequstDTO.getCompilationResults(), totalScore,true);
     }
     private static double extractRealTime(String runTimeString) {
         String[] tokens = runTimeString.split("\\s+");

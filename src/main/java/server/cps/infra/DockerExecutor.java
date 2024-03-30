@@ -10,7 +10,7 @@ import com.github.dockerjava.core.command.LogContainerResultCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import server.cps.compile.dto.CompileRequestDTO;
-import server.cps.problem.dto.ProblemRequstDTO;
+import server.cps.problem.dto.SubmissionRequstDTO;
 import server.cps.model.CompilationResult;
 
 import java.io.File;
@@ -132,7 +132,7 @@ public class DockerExecutor implements ProcessExecutor{
     }
     // 테스트 케이스 만큼 실행
     @Override
-    public List<CompilationResult> executeRuns(ProblemRequstDTO problemRequstDTO) throws IOException, InterruptedException {
+    public List<CompilationResult> executeRuns(SubmissionRequstDTO problemRequstDTO) throws IOException, InterruptedException {
         List<CompilationResult> compilationResults = new ArrayList<>();
         try{
         for (int i = 1; i <= problemRequstDTO.getNumberOfFile(); i++) {

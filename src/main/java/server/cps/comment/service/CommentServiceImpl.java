@@ -10,7 +10,6 @@ import server.cps.entity.Board;
 import server.cps.entity.Comment;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +30,9 @@ public class CommentServiceImpl implements CommentService {
         commentDao.delete(id);
     }
 
-    public Optional<Comment> showComment(Long id) {
+    public Comment showComment(Long id)
+    {
         return commentDao.findById(id);
     }
+
 }

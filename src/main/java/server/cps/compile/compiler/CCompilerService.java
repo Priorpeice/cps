@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import server.cps.compile.dto.Command;
 import server.cps.compile.dto.CompileRequestDTO;
-import server.cps.problem.dto.ProblemRequstDTO;
+import server.cps.problem.dto.SubmissionRequstDTO;
 import server.cps.infra.ProcessExecutor;
 import server.cps.model.CompilationResult;
 import server.cps.compile.repository.CodeRepository;
@@ -45,7 +45,7 @@ public class CCompilerService implements CompilerService  {
     }
 
     @Override
-    public List<CompilationResult> testAndRun(ProblemRequstDTO problemRequstDTO) throws IOException,InterruptedException{
+    public List<CompilationResult> testAndRun(SubmissionRequstDTO problemRequstDTO) throws IOException,InterruptedException{
         problemRequstDTO.setFolderPath(codeRepository.getFolder(problemRequstDTO.getUserName()));
         codeRepository.codeSave(problemRequstDTO.getCode(),problemRequstDTO.getUserName(),problemRequstDTO.getLanguage());
         problemRequstDTO.setCommand(command("gcc:latest" , ".c",".in" , "RUN gcc -o " + problemRequstDTO.getUserName()+" "+ problemRequstDTO.getUserName()+".c || exit 1","time -p ./"+problemRequstDTO.getUserName()));

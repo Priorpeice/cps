@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import server.cps.board.dao.BoardDao;
 import server.cps.board.dto.BoardRequestDto;
 import server.cps.board.dto.BoardSerachRequestDTO;
-import server.cps.board.service.BoardService;
 import server.cps.entity.Board;
 
 import java.util.List;
@@ -21,12 +20,18 @@ public class BoardServiceImpl implements BoardService {
         Board board =boardRequestDto.toEntity();
         return boardDao.save(board);
     }
-    public Board showBoard(Long id){
+    public Board findBoard(Long id){
         return boardDao.findById(id);
     }
     // 모든 게시판 조회
     public List<Board> showBoardAll() {
         return boardDao.findAll();
+    }
+    public Board updateBoard(Long id, BoardRequestDto boardRequestDto)
+    {
+        Board board=boardDao.findById(id);
+        board.update(boardRequestDto.getTitle(),boardRequestDto.getContent());
+        return board;
     }
     public List<Board> searchBoards(BoardSerachRequestDTO boardSerachRequestDTO){
         return boardDao.search(boardSerachRequestDTO.getTitle());

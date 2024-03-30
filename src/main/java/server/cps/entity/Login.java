@@ -6,8 +6,7 @@ import lombok.Getter;
 @Entity
 @Getter
 public class Login {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "login_seq")
+    @Id
     private Long seq;
     @Column(name = "login_id")
     private String id;
@@ -15,6 +14,7 @@ public class Login {
     private String pw;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @MapsId
     @JoinColumn(name = "member_id")
     private Member member;
 

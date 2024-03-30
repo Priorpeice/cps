@@ -2,7 +2,7 @@ package server.cps.compile.repository;
 
 import org.springframework.stereotype.Repository;
 import server.cps.compile.dto.CompileRequestDTO;
-import server.cps.problem.dto.ProblemRequstDTO;
+import server.cps.problem.dto.SubmissionRequstDTO;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -14,8 +14,8 @@ public class DockerRepositoryImpl implements DockerRepository {
     public <T> File compileDockerfile(T t) {
         if (t instanceof CompileRequestDTO) {
             return compileCompileRequest((CompileRequestDTO) t);
-        } else if (t instanceof ProblemRequstDTO) {
-            return compileProblemRequest((ProblemRequstDTO) t);
+        } else if (t instanceof SubmissionRequstDTO) {
+            return compileProblemRequest((SubmissionRequstDTO) t);
         }
         return  null;
     }
@@ -47,7 +47,7 @@ public class DockerRepositoryImpl implements DockerRepository {
         });
         return dockerfile;
     }
-    private File compileProblemRequest(ProblemRequstDTO problemRequstDTO) {
+    private File compileProblemRequest(SubmissionRequstDTO problemRequstDTO) {
         String projectDirectory = System.getProperty("user.dir");
         File dockerfile = new File(projectDirectory,problemRequstDTO.getUserName());
         String userFolderPath= problemRequstDTO.getFolderPath();

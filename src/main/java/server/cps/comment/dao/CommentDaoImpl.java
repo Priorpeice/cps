@@ -8,7 +8,6 @@ import server.cps.comment.repository.CommentRepository;
 import server.cps.entity.Comment;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     @Override
-    public Optional<Comment> findById(Long id) {
-        return commentRepository.findById(id);
+    public Comment findById(Long id) {
+        return commentRepository.findById(id).orElseThrow(()->new EntityNotFoundException());
     }
 }

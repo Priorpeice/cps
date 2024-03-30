@@ -4,8 +4,12 @@ import lombok.Getter;
 
 @Getter
 public enum Status implements MessageFormat {
-    RUN("R01", "execution clear"),
-    SUCCESS("S01","finish")
+    RUN("RU01", "execution clear"),
+    SUCCESS("SU01","finish"),
+    CREATE("CR01", "save clear"),
+    READ("RE01", "find clear"),
+    UPDATE("UP01","change clear"),
+    DELETE("DE01","delete clear")
     ;
     String statusCode;
     String message;

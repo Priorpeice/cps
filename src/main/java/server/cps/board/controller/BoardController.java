@@ -31,7 +31,7 @@ public class BoardController {
     @GetMapping("/api/board/{boardId}")
     public Board getBoard(@PathVariable Long boardId)
     {
-        return boardService.showBoard(boardId);
+        return boardService.findBoard(boardId);
     }
     @GetMapping("/api/boards/search")
     public List<Board> searchBoardsByTitle(@RequestParam("title") String title) {
@@ -39,9 +39,9 @@ public class BoardController {
         boardSerachRequestDTO.setTitle(title);
         return boardService.searchBoards(boardSerachRequestDTO);
     }
-    @PatchMapping("api/board/")
-    public Board updateBoard(){
-        return null;
+    @PatchMapping("api/board/{boardId}")
+    public Board updateBoard(@RequestBody BoardRequestDto boardRequestDto,@PathVariable Long boardId){
+        return boardService.updateBoard(boardId, boardRequestDto);
     }
     //삭제 반환 DTO
     @DeleteMapping("/api/board/{boardId}")
