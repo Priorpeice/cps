@@ -13,26 +13,32 @@ public class MemberServiceImpl implements MemberSevice{
     private final MemberDAO memberDAO;
     @Override
     public Member createMember(MemberRequestDTO memberRequestDTO) {
-        return null;
+        //Memeber toEntity
+        Member member =memberRequestDTO.toEntity();
+        member.setLogin(memberRequestDTO.toEntity(member));
+        //save
+        return memberDAO.save(member);
     }
 
     @Override
     public Member findMember(Long id) {
-        return null;
+        return memberDAO.findById(id);
     }
 
     @Override
     public Member updateMember(MemberRequestDTO memberRequestDTO) {
+        //find
+        //save
         return null;
     }
 
     @Override
     public void deleteMember(Long id) {
-
+       memberDAO.delete(id);
     }
 
     @Override
     public List<Member> findAllMember() {
-        return null;
+        return memberDAO.findAll();
     }
 }

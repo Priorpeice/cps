@@ -18,6 +18,7 @@ public class Problem {
     private String title;
     @Column(name = "problem_content")
     private String content;
+    /*persist도 같이 되야함*/
     @OneToMany(mappedBy = "problem",cascade = CascadeType.ALL)
     private List<Example> examples = new ArrayList<>();
     @OneToMany(mappedBy = "problem",cascade = CascadeType.REMOVE)

@@ -30,6 +30,11 @@ public class ProblemController {
     public List<ProblemSearchResponseDTO> showProblems(){
         return  problemService.findIdAndTitle();
     }
+    @GetMapping("/api/problem/{problemId}")
+    public Problem getBoard(@PathVariable Long problemId)
+    {
+        return problemService.findById(problemId);
+    }
     @PostMapping("/api/problem")
     public Problem createProblem(@RequestBody ProblemRequestDTO problemRequestDTO)
     {

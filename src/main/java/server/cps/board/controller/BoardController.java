@@ -1,5 +1,6 @@
 package server.cps.board.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +16,11 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 //@RequestMapping()
 public class BoardController {
     @Autowired
-    BoardService boardService;
+    private final BoardService boardService;
     @GetMapping("/api/boards")
     public List<Board> getAllBoards() {
         return boardService.showBoardAll();
