@@ -7,15 +7,23 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import server.cps.auth.dao.LoginDAO;
 import server.cps.entity.Login;
+import server.cps.entity.Member;
+import server.cps.entity.Role;
+import server.cps.member.dao.MemberDAO;
+import server.cps.member.dto.MemberRequestDTO;
 import server.cps.security.TokenInfo;
 import server.cps.security.TokenProvider;
+
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @Service
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService{
     private final LoginDAO loginDAO;
+    private final MemberDAO memberDAO;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider TokenProvider;
     private final BCryptPasswordEncoder encoder;
@@ -34,13 +42,29 @@ public class LoginServiceImpl implements LoginService{
     {
         return loginDAO.save(login);
     }
+    @Override
+    public Member signUp(@RequestBody MemberRequestDTO memberRequestDTO)throws SQLIntegrityConstraintViolationException
+    {
+        //Memeber toEntity
+        String encode = encoder.encode(memberRequestDTO.getPw());
+        memberRequestDTO.setPw(encode);
+        Member member =memberRequestDTO.toEntity();
+        member.setUser(memberRequestDTO.toEntity(member));
+
+        member.setRole(Role.builder()
+                .member(member)
+                .build());
+        //save
+        return memberDAO.save(member);
+    }
+
 
     @Transactional
+    @Override
     public TokenInfo login(String memberId, String password) {
         Login login = loginDAO.findByLoginId(memberId);
         if (encoder.matches(password,login.getPw())== true) {
-            System.out.println(password);
-            System.out.println("login = " + login.getPw());
+
         // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
         // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberId, password);

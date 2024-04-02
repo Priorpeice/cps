@@ -14,9 +14,6 @@ public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
 
-    // PasswordEncoder는 BCryptPasswordEncoder를 사용
-
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
