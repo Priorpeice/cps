@@ -1,10 +1,7 @@
 package server.cps.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +9,10 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor (access = AccessLevel.PROTECTED)
-
+@AllArgsConstructor
 public class Member {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name= "member_id")
+    @Id  @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
     @Column(name= "member_name")
     private  String name;
@@ -35,8 +31,12 @@ public class Member {
     private List<Comment> comments = new ArrayList<>();
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Submission> submissions = new ArrayList<>();
-    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private Login login;
+    @OneToOne(mappedBy = "member" ,fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "member_id")
+    private Login user;
+    @OneToOne(mappedBy = "member" ,fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "member_id")
+    private Role role;
     @Builder
     public Member(String name, String nickname, String phone, Long studentId, String email) {
         this.name = name;
@@ -46,7 +46,8 @@ public class Member {
         this.email = email;
     }
 
-    public void setLogin(Login login) {
-        this.login = login;
+    public void setUser(Login user)   {
+        this.user = user;
     }
+    public void setRole(Role role){this.role = role;}
 }
