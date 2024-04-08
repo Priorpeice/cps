@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import server.cps.auth.repository.LoginRepository;
 
@@ -13,14 +14,16 @@ import server.cps.auth.repository.LoginRepository;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final LoginRepository loginRepository;
+    private final PasswordEncoder passwordEncoder;
+    //Encoderf로 인코딩 한번 더 , roles에다가 넣기
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return loginRepository.findById(username)
+        return loginRepository.findAuthById(username)
                 .map(login ->
                         User.builder()
                                 .username(login.getId())
-                                .password(login.getPw())
-                                .authorities(String.valueOf(login.getMember().getRole().getUserRole()))
+                                .password(passwordEncoder.encode(login.getPw()))
+                                .roles(login.getUserRole())
                                 .build()
                 ) .orElseThrow(() -> new UsernameNotFoundException("Could not found user for " + username));
     }

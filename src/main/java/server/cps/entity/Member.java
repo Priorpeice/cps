@@ -33,7 +33,7 @@ public class Member {
     private List<Submission> submissions = new ArrayList<>();
     @OneToOne(mappedBy = "member" ,fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
-    private Login user;
+    private Login login;
     @OneToOne(mappedBy = "member" ,fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
     private Role role;
@@ -46,8 +46,8 @@ public class Member {
         this.email = email;
     }
 
-    public void setUser(Login user)   {
-        this.user = user;
+    public void setLogin(Login login)   {
+        this.login = login;
     }
     public void setRole(Role role){this.role = role;}
 }

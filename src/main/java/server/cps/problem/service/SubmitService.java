@@ -31,24 +31,30 @@ public class SubmitService {
         for (int i = 0; i < submissionRequstDTO.getCompilationResults().size(); i++) {
             CompilationResult compileResult = submissionRequstDTO.getCompilationResults().get(i);
             //시간 정하기
-            double max= 3;
-            double runningTime= extractRealTime(compileResult.getRunTime());
-            String expectedOutput = expectedOutputs.get(i);
-            if(max<=runningTime){
-                return new SubmissionResult(submissionRequstDTO.getCompilationResults(),totalScore,false);
-            }
-            if (compileResult.isCompile() && compileResult.getOutput().trim().equals(expectedOutput.trim())) {
+            if (compileResult.getRunTime() != null) {
+                double max = 3;
+                double runningTime = extractRealTime(compileResult.getRunTime());
+                String expectedOutput = expectedOutputs.get(i);
+                if (max <= runningTime) {
+                    return new SubmissionResult(submissionRequstDTO.getCompilationResults(), totalScore, false);
+                }
+                if (compileResult.isCompile() && compileResult.getOutput().trim().equals(expectedOutput.trim())) {
 
-                totalScore += 10; // 일단 문제당 10점 부여
-            }
-            else{
-                return new SubmissionResult(submissionRequstDTO.getCompilationResults(),totalScore,false);
+                    totalScore += 10; // 일단 문제당 10점 부여
+                } else {
+                    return new SubmissionResult(submissionRequstDTO.getCompilationResults(), totalScore, false);
+                }
+            }else {
+                return new SubmissionResult(submissionRequstDTO.getCompilationResults(), totalScore, false);
             }
         }
         // SubmissionResult 객체 생성
         return new SubmissionResult(submissionRequstDTO.getCompilationResults(), totalScore,true);
     }
     private static double extractRealTime(String runTimeString) {
+        if (runTimeString == null) {
+        throw new IllegalArgumentException("runTimeString cannot be null");
+    }
         String[] tokens = runTimeString.split("\\s+");
         for (int i = 0; i < tokens.length - 1; i++) {
             if ("real".equals(tokens[i])) {

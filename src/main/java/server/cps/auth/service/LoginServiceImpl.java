@@ -1,19 +1,22 @@
 package server.cps.auth.service;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import server.cps.auth.dao.LoginDAO;
+import server.cps.auth.dao.TokenDAO;
 import server.cps.entity.Login;
 import server.cps.entity.Member;
 import server.cps.entity.Role;
 import server.cps.member.dao.MemberDAO;
 import server.cps.member.dto.MemberRequestDTO;
+import server.cps.redis.Token;
 import server.cps.security.TokenInfo;
 import server.cps.security.TokenProvider;
 
@@ -27,6 +30,7 @@ public class LoginServiceImpl implements LoginService{
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider TokenProvider;
     private final BCryptPasswordEncoder encoder;
+    private final TokenDAO tokenDAO;
     @Override
     public Login findUserBySeq(Long id) {
         return loginDAO.findBySeq(id);
@@ -38,18 +42,13 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public Login save(Login login)
-    {
-        return loginDAO.save(login);
-    }
-    @Override
     public Member signUp(@RequestBody MemberRequestDTO memberRequestDTO)throws SQLIntegrityConstraintViolationException
     {
         //Memeber toEntity
         String encode = encoder.encode(memberRequestDTO.getPw());
         memberRequestDTO.setPw(encode);
         Member member =memberRequestDTO.toEntity();
-        member.setUser(memberRequestDTO.toEntity(member));
+        member.setLogin(memberRequestDTO.toEntity(member));
 
         member.setRole(Role.builder()
                 .member(member)
@@ -58,28 +57,44 @@ public class LoginServiceImpl implements LoginService{
         return memberDAO.save(member);
     }
 
-
-    @Transactional
+   @Transactional
     @Override
-    public TokenInfo login(String memberId, String password) {
-        Login login = loginDAO.findByLoginId(memberId);
-        if (encoder.matches(password,login.getPw())== true) {
-
-        // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
-        // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberId, password);
-
-        // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
-        // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenInfo tokenInfo = TokenProvider.generateToken(authentication);
+    public TokenInfo login(String loginId, String password) {
+        Login login = loginDAO.findByLoginId(loginId);
+        if (encoder.matches(password, login.getPw())) {
+            String pw=login.getPw();
+            TokenInfo tokenInfo= checkToken(loginId,pw);
+            tokenDAO.save(String.valueOf(login.getSeq()),tokenInfo.getRefreshToken());
             return tokenInfo;
         } else {
-            throw  new RuntimeException();
+            throw  new IllegalArgumentException();
         }
-
     }
+    @Transactional
+    @Override
+    public TokenInfo reissue(String memberId, String refreshToken){
+        Token token=tokenDAO.findById(memberId);
+        if (TokenProvider.validateToken(refreshToken) &&
+                refreshToken.equals( token.getRefreshToken()))
+        {
+            Login login=loginDAO.findBySeq(Long.valueOf(memberId));
+            TokenInfo tokenInfo = checkToken(login.getId(), login.getPw());
+            tokenDAO.save(String.valueOf(login.getSeq()),tokenInfo.getRefreshToken());
+            return tokenInfo;
+        }
+        throw new IllegalArgumentException("올바르지 않은 토큰");
+    }
+    private TokenInfo checkToken(String loginId, String password) {
+
+        // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, password);
+
+        // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        return TokenProvider.generateToken(authentication);
+    }
+
+
 
 }

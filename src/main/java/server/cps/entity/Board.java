@@ -1,5 +1,6 @@
 package server.cps.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -33,6 +34,7 @@ public class Board {
     @Column(name = "board_view")
     private  Long viewCount;
     //member id 관계 설정해야함
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -59,6 +61,7 @@ public class Board {
         this.content = content;
         this.viewCount = 0L;
     }
+
 
 
 

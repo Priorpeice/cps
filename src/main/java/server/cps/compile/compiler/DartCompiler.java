@@ -47,7 +47,7 @@ public class DartCompiler implements CompilerService{
     public List<CompilationResult> testAndRun(SubmissionRequstDTO problemRequstDTO) throws InterruptedException, IOException {
         problemRequstDTO.setFolderPath(codeRepository.getFolder(problemRequstDTO.getUserName()));
         codeRepository.codeSave(problemRequstDTO.getCode(),problemRequstDTO.getUserName(),problemRequstDTO.getLanguage());
-        problemRequstDTO.setCommand(command("dart:latest AS dart-builder" , ".dart",".in" , "","time - p dart "+problemRequstDTO.getUserName()+".dart"));
+        problemRequstDTO.setCommand(command("dart:latest AS dart-builder" , ".dart",".in" , "","dart "+problemRequstDTO.getUserName()+".dart"));
         problemRequstDTO.setNumberOfFile(codeRepository.countFile(problemRequstDTO.getProblemId(), ".in"));
         File file =dockerRepository.compileDockerfile(problemRequstDTO);
         CompilationResult compilationResult = processExecutor.executeCompile(file);

@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.cps.board.dao.BoardDao;
 import server.cps.board.dto.BoardRequestDto;
+import server.cps.board.dto.BoardResponseDto;
 import server.cps.board.dto.BoardSerachRequestDTO;
 import server.cps.entity.Board;
+import server.cps.entity.Member;
 
 import java.util.List;
 
@@ -16,11 +18,18 @@ import java.util.List;
 public class BoardServiceImpl implements BoardService {
     private final BoardDao boardDao;
 
-    public Board saveBoard(BoardRequestDto boardRequestDto) {
-        Board board =boardRequestDto.toEntity();
-        return boardDao.save(board);
+    public BoardResponseDto saveBoard(BoardRequestDto boardRequestDto , Member member) {
+        Board board =boardRequestDto.toEntity(member);
+        Board saveBoard = boardDao.save(board);
+        return BoardResponseDto.builder()
+                .boardId(saveBoard.getId().toString())
+                .title(saveBoard.getTitle())
+                .content(saveBoard.getContent())
+                .memberId(saveBoard.getMember().getId().toString())
+                .build();
     }
     public Board findBoard(Long id){
+
         return boardDao.findById(id);
     }
     // 모든 게시판 조회

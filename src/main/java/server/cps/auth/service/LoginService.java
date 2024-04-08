@@ -11,7 +11,9 @@ import java.sql.SQLIntegrityConstraintViolationException;
 public interface LoginService {
     Login findUserBySeq(Long id);
     Login findUserByLoginId(String loginId);
-    Login save(Login login);
+
     TokenInfo login(String memberId, String password);
     Member signUp(@RequestBody MemberRequestDTO memberRequestDTO)throws SQLIntegrityConstraintViolationException;
+    TokenInfo reissue(String memberId, String refreshToken);
+
 }
