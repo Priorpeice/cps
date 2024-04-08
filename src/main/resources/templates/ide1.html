@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>IDE</title>
+</head>
+<body>
+<h1>Online IDE</h1>
+
+<!-- Compile Form -->
+<form action="/compile" method="post">
+  <label for="compileLanguage">Select Language:</label>
+  <select name="language" id="compileLanguage">
+
+    <option value="java">Java</option>
+    <option value="py">Python</option>
+    <option value="c">C</option>
+    <option value="cpp">C++</option>
+    <option value="js">JavaScript</option>
+
+  </select><br>
+  <textarea name="code" rows="10" cols="50"></textarea><br>
+  <label for="input">Enter input:</label><br>
+  <textarea name="input" id="input" rows="5" cols="50"></textarea><br>
+  <input type="submit" value="Compile">
+</form>
+
+<!-- Submit Form -->
+<form action="/submit" method="post">
+  <label for="submitLanguage">Select Language:</label>
+  <select name="language" id="submitLanguage">
+    <option value="java">Java</option>
+    <option value="py">Python</option>
+    <option value="c">C</option>
+    <option value="cpp">C++</option>
+  </select><br>
+
+  <label for="problemType">Select Problem Type:</label>
+  <select name="problem" id="problemType">
+    <option value="Q1">Problem 1</option>
+    <option value="Q2">Problem 2</option>
+
+  </select><br>
+
+  <textarea name="code" rows="10" cols="50"></textarea><br>
+  <input type="submit" value="Submit">
+</form>
+<br>예금주 농협 이제희 351- 0562 - 8003 - 33</br>
+</body>
+</html>

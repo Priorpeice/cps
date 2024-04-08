@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Submission Result</title>
+</head>
+<body>
+<h2>Submission Result</h2>
+
+<div th:if="${submissionResult.getSuccess()}">
+  <p>Compilation Successful!</p>
+  <p th:text="'Compile Output: ' + ${submissionResult.getSuccess()}"></p>
+</div>
+<div th:unless="${submissionResult.getSuccess()}">
+  <p>Compilation Failed</p>
+  <p th:text="'Compile Error: ' + ${submissionResult.getSuccess()}"></p>
+
+</div>
+
+<p th:text="'Score: ' + ${submissionResult.score}"></p>
+</body>
+</html>

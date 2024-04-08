@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Problem List Page</title>
+</head>
+<body>
+
+<h1>Problem List</h1>
+
+<table border="1">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Title</th>
+    <th>Description</th>
+    <!-- 추가적인 필드들에 대한 헤더 추가 -->
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="problem : ${problems}">
+    <td th:text="${problem.id}"></td>
+    <td th:text="${problem.title}"></td>
+    <td th:text="${problem.description}"></td>
+    <!-- 추가적인 필드들에 대한 셀 추가 -->
+  </tr>
+  </tbody>
+</table>
+
+<!-- 홈으로 돌아가는 버튼 -->
+<a th:href="@{/}">
+  <button type="button">Go back to Home</button>
+</a>
+<a th:href="@{/create}">
+  <button type="button">Create a New Problem</button>
+</a>
+
+</body>
+</html>
