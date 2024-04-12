@@ -1,5 +1,6 @@
 package server.cps.compile.service;
 
+import com.sun.jna.LastErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import server.cps.compile.compiler.CompilerService;
@@ -13,7 +14,7 @@ public class CompilerSelectService {
         this.languageCompilerMap = languageCompilerMap;
     }
 
-    public CompilerService getCompilerForLanguage(String language) {
+    public CompilerService getCompilerForLanguage(String language) throws LastErrorException {
         CompilerService compiler = languageCompilerMap.get(language);
         System.out.println(compiler);
         if (compiler != null) {
