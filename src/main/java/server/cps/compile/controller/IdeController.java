@@ -1,5 +1,6 @@
 package server.cps.compile.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,33 +10,35 @@ import org.springframework.web.bind.annotation.RestController;
 import server.cps.common.CpsResponse;
 import server.cps.common.ResoponseBody;
 import server.cps.common.Status;
-import server.cps.compile.service.CompilerSelectService;
 import server.cps.compile.dto.CompileRequestDTO;
+import server.cps.compile.service.CompilerSelectService;
+import server.cps.exception.DockerException;
 import server.cps.model.CompilationResult;
 
 import java.io.IOException;
 
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 public class IdeController {
 //    @Autowired
 //    private CompileService compileService;
 
     @Autowired
-    private CompilerSelectService compilerSelectService;
+    private final  CompilerSelectService compilerSelectService;
 
 //    @GetMapping("/ide")
 //    public String ide(){
 //        return "ide";
 //    }
     @PostMapping("/api/compile")
-    public ResponseEntity<ResoponseBody<CompilationResult>> compileCode(@RequestBody CompileRequestDTO compileRequest) {
+    public ResponseEntity<ResoponseBody<CompilationResult>> compileCode(@RequestBody CompileRequestDTO compileRequest)  {
         compileRequest.setUserName("Test");
         try {
             CompilationResult result = compilerSelectService.getCompilerForLanguage(compileRequest.getLanguage()).compileAndRun(compileRequest);
             return CpsResponse.toResponse(Status.RUN, result);
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (IOException | InterruptedException | DockerException e) {
+            throw new DockerException(e.toString(),500);
         }
     }
 

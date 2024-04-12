@@ -7,11 +7,13 @@ import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.api.model.StreamType;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.github.dockerjava.core.command.LogContainerResultCallback;
+import com.sun.jna.LastErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import server.cps.compile.dto.CompileRequestDTO;
-import server.cps.problem.dto.SubmissionRequstDTO;
+import server.cps.exception.DockerException;
 import server.cps.model.CompilationResult;
+import server.cps.problem.dto.SubmissionRequstDTO;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +32,15 @@ public class DockerExecutor implements ProcessExecutor{
     }
 
     @Override
-    public CompilationResult executeCompile(File file) throws IOException, InterruptedException {
-        return buildImage(file);
+    public CompilationResult executeCompile(File file) throws LastErrorException {
+        try {
+            return buildImage(file);
+        } catch (RuntimeException e) {
+            throw new DockerException( e.getMessage(), 500);
+        }
     }
     @Override
-    public CompilationResult executeRun(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
+    public CompilationResult executeRun(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException, LastErrorException {
         return runContainer(compilationResult,compileRequestDTO.getCommand().getRunCommand());
     }
     //image build

@@ -4,7 +4,8 @@ import lombok.Getter;
 import server.cps.common.MessageFormat;
 @Getter
 public enum ErrorStatus implements MessageFormat {
-    NOT_FOUND("ER01", "Not Found")
+    NOT_FOUND("ER01", "Not Found"),
+    DOCKER_ERROR("DK01", "Docker has Down"),
     ;
 
     String statusCode;

@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import server.cps.entity.Member;
+import server.cps.exception.MemberException;
 import server.cps.member.repository.MemberRepository;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class MemberDAOImpl implements MemberDAO{
 
     @Override
     public Member findById(Long id) {
-        return memberRepository.findById(id).orElseThrow(()-> new EntityNotFoundException());
+        return memberRepository.findById(id).orElseThrow(()-> new MemberException(403));
     }
 
     @Override
