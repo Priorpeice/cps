@@ -25,7 +25,7 @@ public class IdeController {
 //    private CompileService compileService;
 
     @Autowired
-    private final  CompilerSelectService compilerSelectService;
+    private final CompilerSelectService compilerSelectService;
 
 //    @GetMapping("/ide")
 //    public String ide(){

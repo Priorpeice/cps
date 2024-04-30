@@ -9,7 +9,8 @@ public enum Status implements MessageFormat {
     CREATE("CR01", "save clear"),
     READ("RE01", "find clear"),
     UPDATE("UP01","change clear"),
-    DELETE("DE01","delete clear")
+    DELETE("DE01","delete clear"),
+    LLAMA("LL01", "verification clear"),
     ;
     String statusCode;
     String message;

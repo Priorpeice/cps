@@ -16,7 +16,6 @@ public class CompilerSelectService {
 
     public CompilerService getCompilerForLanguage(String language) throws LastErrorException {
         CompilerService compiler = languageCompilerMap.get(language);
-        System.out.println(compiler);
         if (compiler != null) {
             return compiler;
         }
