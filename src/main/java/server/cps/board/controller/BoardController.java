@@ -39,7 +39,6 @@ public class BoardController {
     public BoardResponseDto createBoard(@RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal UserDetails userDetails) {
         // 사용자의 memberId 가져오기
         String memberId = userDetails.getUsername();
-        System.out.println("memberId = " + memberId);
         Login user = loginService.findUserByLoginId(memberId);
 
         Member member = memberSevice.findMember(user.getSeq());
