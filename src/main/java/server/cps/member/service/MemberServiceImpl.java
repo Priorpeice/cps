@@ -33,4 +33,9 @@ public class MemberServiceImpl implements MemberSevice{
     public List<Member> findAllMember() {
         return memberDAO.findAll();
     }
+
+    @Override
+    public Member findMemberWithLoginid(String loginid) {
+        return memberDAO.findByLoginIdWithMember(loginid);
+    }
 }

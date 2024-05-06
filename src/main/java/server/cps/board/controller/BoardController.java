@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import server.cps.auth.service.LoginService;
+import server.cps.board.dto.BoardDto;
 import server.cps.board.dto.BoardRequestDto;
 import server.cps.board.dto.BoardResponseDto;
 import server.cps.board.dto.BoardSerachRequestDTO;
@@ -15,7 +16,6 @@ import server.cps.common.CpsResponse;
 import server.cps.common.ResoponseBody;
 import server.cps.common.Status;
 import server.cps.entity.Board;
-import server.cps.entity.Login;
 import server.cps.entity.Member;
 import server.cps.member.service.MemberSevice;
 
@@ -32,16 +32,17 @@ public class BoardController {
     private final LoginService loginService;
     @GetMapping("/api/boards")
 //    @PreAuthorize("hasRole('USER')")
-    public List<Board> getAllBoards() {
+    public List<BoardDto> getAllBoards() {
         return boardService.showBoardAll();
     }
     @PostMapping("/api/board")
     public BoardResponseDto createBoard(@RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal UserDetails userDetails) {
         // 사용자의 memberId 가져오기
         String memberId = userDetails.getUsername();
-        Login user = loginService.findUserByLoginId(memberId);
-
-        Member member = memberSevice.findMember(user.getSeq());
+//        Login user = loginService.findUserByLoginId(memberId);
+//
+//        Member member = memberSevice.findMember(user.getSeq());
+        Member member = memberSevice.findMemberWithLoginid(memberId);
 
         return boardService.saveBoard(boardRequestDto, member);
     }

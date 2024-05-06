@@ -1,5 +1,6 @@
 package server.cps.board.service;
 
+import server.cps.board.dto.BoardDto;
 import server.cps.board.dto.BoardRequestDto;
 import server.cps.board.dto.BoardResponseDto;
 import server.cps.board.dto.BoardSerachRequestDTO;
@@ -12,7 +13,7 @@ public interface BoardService {
     BoardResponseDto saveBoard(BoardRequestDto boardRequestDto, Member member);
     Board findBoard(Long id);
     Board updateBoard(Long id, BoardRequestDto boardRequestDto);
-    List<Board> showBoardAll();
+    List<BoardDto> showBoardAll();
     List<Board> searchBoards(BoardSerachRequestDTO boardSerachRequestDTO);
     void deleteBoard(Long id) ;
 

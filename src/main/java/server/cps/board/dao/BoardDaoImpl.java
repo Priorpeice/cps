@@ -3,6 +3,7 @@ package server.cps.board.dao;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import server.cps.board.dto.BoardDto;
 import server.cps.board.repository.BoardRepository;
 import server.cps.entity.Board;
 
@@ -24,8 +25,8 @@ public class BoardDaoImpl implements BoardDao {
     }
 
     @Override
-    public List<Board> findAll() {
-        return boardRepository.findAll();
+    public List<BoardDto> findAllBoards() {
+        return boardRepository.findAllBoards();
     }
 
     @Override

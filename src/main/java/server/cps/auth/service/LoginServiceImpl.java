@@ -47,7 +47,7 @@ public class LoginServiceImpl implements LoginService{
         //Memeber toEntity
         String encode = encoder.encode(memberRequestDTO.getPw());
         memberRequestDTO.setPw(encode);
-        Member member =memberRequestDTO.toEntity();
+        Member member = memberRequestDTO.toEntity();
         member.setLogin(memberRequestDTO.toEntity(member));
 
         member.setRole(Role.builder()
