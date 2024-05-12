@@ -2,6 +2,8 @@ package server.cps.board.dao;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import server.cps.board.dto.BoardDto;
 import server.cps.board.repository.BoardRepository;
@@ -35,7 +37,12 @@ public class BoardDaoImpl implements BoardDao {
     }
 
     @Override
-    public List<Board> search(String title) {
-        return boardRepository.findByTitleContainingIgnoreCase(title);
+    public Page<Board> search(Pageable pageable,String title) {
+        return boardRepository.findByTitleContainingIgnoreCase(pageable,title);
+    }
+
+    @Override
+    public Page<Board> findAll(Pageable pageable) {
+        return boardRepository.findAllWithMemberFetch(pageable);
     }
 }

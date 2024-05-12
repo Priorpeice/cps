@@ -1,7 +1,9 @@
 package server.cps.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -9,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@RequiredArgsConstructor
 public class Submission {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name= "submission_id")
@@ -27,5 +30,11 @@ public class Submission {
     private Member member;
     @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     private Problem problem;
-
+    @Builder
+    public Submission(String code, Boolean isAnswer, Member member, Problem problem) {
+        this.code = code;
+        this.isAnswer = isAnswer;
+        this.member = member;
+        this.problem = problem;
+    }
 }

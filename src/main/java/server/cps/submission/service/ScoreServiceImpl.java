@@ -1,7 +1,7 @@
-package server.cps.problem.service;
+package server.cps.submission.service;
 
 import org.springframework.stereotype.Service;
-import server.cps.problem.dto.SubmissionRequstDTO;
+import server.cps.submission.dto.SubmissionRequstDTO;
 import server.cps.model.CompilationResult;
 import server.cps.model.SubmissionResult;
 import server.cps.compile.repository.CodeRepository;
@@ -9,16 +9,13 @@ import server.cps.compile.repository.CodeRepository;
 import java.util.List;
 
 @Service
-public class SubmitService {
+public class ScoreServiceImpl implements ScoreService{
     private final CodeRepository codeRepository;
-//    private final ProblemRespository problemRespository;
 
-
-    public SubmitService(CodeRepository codeRepository ) {
+    public ScoreServiceImpl(CodeRepository codeRepository ) {
         this.codeRepository = codeRepository;
 
     }
-    // 수정 필요
 
     // 1. 테스트로 받아온 결과 채점 시스템 구현
     //

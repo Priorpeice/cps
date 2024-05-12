@@ -2,6 +2,8 @@ package server.cps.board.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +17,8 @@ import server.cps.board.service.BoardService;
 import server.cps.common.CpsResponse;
 import server.cps.common.ResoponseBody;
 import server.cps.common.Status;
+import server.cps.common.page.PageResponse;
+import server.cps.common.page.Pageinfo;
 import server.cps.entity.Board;
 import server.cps.entity.Member;
 import server.cps.member.service.MemberSevice;
@@ -32,16 +36,20 @@ public class BoardController {
     private final LoginService loginService;
     @GetMapping("/api/boards")
 //    @PreAuthorize("hasRole('USER')")
-    public List<BoardDto> getAllBoards() {
-        return boardService.showBoardAll();
+    public ResponseEntity<ResoponseBody<PageResponse<BoardDto>>>getAllBoards(@PageableDefault(page = 0, size = 10)Pageable pageable) {
+        List<BoardDto> boards = boardService.findAllBoards(pageable);
+        Pageinfo pageinfo = new Pageinfo(pageable);
+
+        PageResponse<BoardDto> pageResponse = PageResponse.<BoardDto>builder()
+                .content(boards)
+                .pageinfo(pageinfo)
+                .build();
+        return CpsResponse.toResponse(Status.READ,pageResponse);
     }
     @PostMapping("/api/board")
     public BoardResponseDto createBoard(@RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal UserDetails userDetails) {
         // 사용자의 memberId 가져오기
         String memberId = userDetails.getUsername();
-//        Login user = loginService.findUserByLoginId(memberId);
-//
-//        Member member = memberSevice.findMember(user.getSeq());
         Member member = memberSevice.findMemberWithLoginid(memberId);
 
         return boardService.saveBoard(boardRequestDto, member);
@@ -52,10 +60,16 @@ public class BoardController {
         return boardService.findBoard(boardId);
     }
     @GetMapping("/api/boards/search")
-    public List<Board> searchBoardsByTitle(@RequestParam("title") String title) {
+    public ResponseEntity<ResoponseBody<PageResponse<BoardDto>>> searchBoardsByTitle(@PageableDefault(page = 0, size = 10)Pageable pageable,@RequestParam("title") String title) {
         BoardSerachRequestDTO boardSerachRequestDTO=new BoardSerachRequestDTO();
         boardSerachRequestDTO.setTitle(title);
-        return boardService.searchBoards(boardSerachRequestDTO);
+        List<BoardDto> searchBoards = boardService.searchBoards(pageable, boardSerachRequestDTO);
+        Pageinfo pageinfo = new Pageinfo(pageable);
+        PageResponse<BoardDto> pageResponse = PageResponse.<BoardDto>builder()
+                .content(searchBoards)
+                .pageinfo(pageinfo)
+                .build();
+        return CpsResponse.toResponse(Status.READ,pageResponse);
     }
     @PatchMapping("api/board/{boardId}")
     public Board updateBoard(@RequestBody BoardRequestDto boardRequestDto,@PathVariable Long boardId){

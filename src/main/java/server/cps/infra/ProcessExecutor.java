@@ -1,7 +1,7 @@
 package server.cps.infra;
 
 import server.cps.compile.dto.CompileRequestDTO;
-import server.cps.problem.dto.SubmissionRequstDTO;
+import server.cps.submission.dto.SubmissionRequstDTO;
 import server.cps.model.CompilationResult;
 
 import java.io.File;

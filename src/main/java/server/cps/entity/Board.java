@@ -62,8 +62,4 @@ public class Board {
         this.viewCount = 0L;
     }
 
-
-
-
-
 }

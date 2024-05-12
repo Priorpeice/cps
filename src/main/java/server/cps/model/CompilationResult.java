@@ -19,7 +19,5 @@ public class CompilationResult {
     public boolean isCompile() {
         return isCompile;
     }
-    public void setOutput(String output) {
-        this.output = output;
-    }
+
 }

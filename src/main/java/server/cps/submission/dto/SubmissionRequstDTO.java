@@ -1,4 +1,4 @@
-package server.cps.problem.dto;
+package server.cps.submission.dto;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,5 +1,7 @@
 package server.cps.board.dao;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import server.cps.board.dto.BoardDto;
 import server.cps.entity.Board;
 
@@ -10,7 +12,8 @@ public interface BoardDao {
     Board findById(Long id);
     List<BoardDto> findAllBoards();
     void deleteById(Long id);
-    List<Board> search(String title);
+    Page<Board> search(Pageable pageable,String title);
+    Page<Board> findAll(Pageable pageable);
 
 
 }
