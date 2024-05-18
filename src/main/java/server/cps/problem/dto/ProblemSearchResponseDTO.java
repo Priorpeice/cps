@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import server.cps.entity.Problem;
 
 @Data
 @Builder
@@ -13,12 +12,4 @@ import server.cps.entity.Problem;
 public class ProblemSearchResponseDTO {
     private Long id;
     private String title;
-
-    public static ProblemSearchResponseDTO toDTO(Problem problem) {
-       return ProblemSearchResponseDTO.builder()
-               .id(problem.getId())
-               .title(problem.getTitle())
-               .build();
-    }
-
 }

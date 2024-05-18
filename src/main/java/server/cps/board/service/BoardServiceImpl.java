@@ -11,12 +11,10 @@ import server.cps.board.dto.BoardDto;
 import server.cps.board.dto.BoardRequestDto;
 import server.cps.board.dto.BoardResponseDto;
 import server.cps.board.dto.BoardSerachRequestDTO;
-import server.cps.board.mapper.BoardMapper;
 import server.cps.entity.Board;
 import server.cps.entity.Member;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,13 +46,8 @@ public class BoardServiceImpl implements BoardService {
         board.update(boardRequestDto.getTitle(),boardRequestDto.getContent());
         return board;
     }
-    public List<BoardDto> searchBoards(Pageable pageable,BoardSerachRequestDTO boardSerachRequestDTO){
-        Page<Board> searchs = boardDao.search(pageable, boardSerachRequestDTO.getTitle());
-        List<BoardDto> boardDtoList = searchs.getContent()
-                .stream()
-                .map(BoardMapper::toDto) // BoardDto로의 매핑 메서드 호출
-                .collect(Collectors.toList());
-        return boardDtoList;
+    public  Page<Board>  searchBoards(Pageable pageable,BoardSerachRequestDTO boardSerachRequestDTO){
+     return  boardDao.search(pageable, boardSerachRequestDTO.getTitle());
     }
 
     // 특정 ID에 해당하는 게시판 삭제
@@ -66,13 +59,9 @@ public class BoardServiceImpl implements BoardService {
 
 
     @Override
-    public  List<BoardDto> findAllBoards(Pageable pageable) {
+    public Page<Board>findAllBoards(Pageable pageable) {
 
-        Page<Board> boards = boardDao.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));
-        List<BoardDto> boardDtoList = boards.getContent()
-                .stream()
-                .map(BoardMapper::toDto) // BoardDto로의 매핑 메서드 호출
-                .collect(Collectors.toList());
-        return boardDtoList;
+       return boardDao.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));
+
     }
 }

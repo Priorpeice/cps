@@ -1,6 +1,8 @@
 package server.cps.problem.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.cps.entity.Problem;
@@ -33,13 +35,13 @@ public class ProblemServiceImpl implements ProblemService{
     }
 
     @Override
-    public List<Problem> showProblemAll() {
+    public Page<Problem> showProblemAll(Pageable pageable) {
 
-        return problemDAO.findAll();
+        return problemDAO.findAll(pageable);
     }
     @Override
-    public List<Problem> searchProblems(ProblemRequestDTO problemRequestDTO) {
-        return problemDAO.search(problemRequestDTO.getTitle());
+    public Page<Problem> searchProblems(Pageable pageable,ProblemRequestDTO problemRequestDTO) {
+        return problemDAO.search(pageable,problemRequestDTO.getTitle());
     }
 
     @Override

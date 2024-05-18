@@ -25,6 +25,7 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
     void deleteById(Long id);
     List<Board> findByTitleContainingIgnoreCase(String title);
 
-    Page<Board> findByTitleContainingIgnoreCase(Pageable pageable,String title);
+    @Query("SELECT b FROM Board b JOIN FETCH b.member m LEFT JOIN FETCH m.role LEFT JOIN FETCH m.login WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%'))")
+    Page<Board> findByTitleContainingIgnoreCase(Pageable pageable, @Param("title") String title);
 
 }

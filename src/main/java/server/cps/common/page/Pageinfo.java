@@ -2,6 +2,7 @@ package server.cps.common.page;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @Getter
@@ -15,9 +16,17 @@ public class Pageinfo {
     private boolean isFirst; // 첫 페이지 여부
     private boolean isLast; // 마지막 페이지 여부
 
+    public Pageinfo(Page page, Pageable pageable) {
+        this.pageNum = pageable.getPageNumber();
+        this.listLimit = pageable.getPageSize();
+        this.isFirst = pageable.getPageNumber() == 0;
+        this.listCount= page.getTotalElements();
+        this.maxPage =page.getTotalPages();
+    }
     public Pageinfo(Pageable pageable) {
         this.pageNum = pageable.getPageNumber();
         this.listLimit = pageable.getPageSize();
         this.isFirst = pageable.getPageNumber() == 0;
+
     }
 }

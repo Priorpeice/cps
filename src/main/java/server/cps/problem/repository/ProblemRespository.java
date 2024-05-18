@@ -1,5 +1,7 @@
 package server.cps.problem.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import server.cps.entity.Problem;
@@ -16,6 +18,7 @@ public interface ProblemRespository extends JpaRepository<Problem,Long> {
     List<ProblemSearchResponseDTO> findIdAndTitle();
     void deleteById(Long id);
     void delete(Problem problem);
-    List<Problem> findByTitleContainingIgnoreCase(String title);
+    Page<Problem> findAll(Pageable pageable);
+    Page<Problem> findByTitleContainingIgnoreCase(Pageable pageable,String title);
 
 }
