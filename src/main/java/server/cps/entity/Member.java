@@ -27,6 +27,7 @@ public class Member {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY ,cascade = CascadeType.REMOVE)
     private List<Board> boards = new ArrayList<>();
+
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)

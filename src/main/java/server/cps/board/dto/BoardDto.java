@@ -1,15 +1,15 @@
-package server.cps.problem.dto;
+package server.cps.board.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProblemSearchResponseDTO {
+public class BoardDto {
     private Long id;
     private String title;
+    private String memberNickname;
+
 }

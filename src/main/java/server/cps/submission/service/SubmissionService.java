@@ -1,0 +1,8 @@
+package server.cps.submission.service;
+
+import server.cps.entity.Submission;
+import server.cps.submission.dto.SubmissionInfoDTO;
+
+public interface SubmissionService {
+    Submission submissionSave(SubmissionInfoDTO submissionInfoDTO);
+}

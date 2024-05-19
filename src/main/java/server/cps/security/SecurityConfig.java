@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((authorize)-> authorize
                         .requestMatchers(HttpMethod.GET , "/api/board/{boardId}").permitAll()
+                        .requestMatchers(HttpMethod.GET , "/api/problem/{problemId}").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/problem").hasRole("USER")
                         .requestMatchers(HttpMethod.POST,"/api/board").hasRole("USER") // 로그인 api
                         .requestMatchers("/api/auth/member").permitAll() // 회원가입 api

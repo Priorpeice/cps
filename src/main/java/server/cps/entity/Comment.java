@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)//접근 레벨 프로텍
 @EntityListeners(AuditingEntityListener.class)
+
 public class Comment {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +28,7 @@ public class Comment {
     @JoinColumn(name= "member_id")
     private Member member;
     @JsonIgnore
+
     @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     @JoinColumn(name= "board_id")
     private Board board;

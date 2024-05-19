@@ -12,4 +12,6 @@ public interface MemberSevice {
     void deleteMember(Long id);
 
     List<Member> findAllMember();
+
+    Member findMemberWithLoginid(String loginid);
 }

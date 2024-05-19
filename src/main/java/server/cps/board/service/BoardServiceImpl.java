@@ -1,9 +1,13 @@
 package server.cps.board.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.cps.board.dao.BoardDao;
+import server.cps.board.dto.BoardDto;
 import server.cps.board.dto.BoardRequestDto;
 import server.cps.board.dto.BoardResponseDto;
 import server.cps.board.dto.BoardSerachRequestDTO;
@@ -33,8 +37,8 @@ public class BoardServiceImpl implements BoardService {
         return boardDao.findById(id);
     }
     // 모든 게시판 조회
-    public List<Board> showBoardAll() {
-        return boardDao.findAll();
+    public List<BoardDto> showBoardAll() {
+        return boardDao.findAllBoards();
     }
     public Board updateBoard(Long id, BoardRequestDto boardRequestDto)
     {
@@ -42,8 +46,8 @@ public class BoardServiceImpl implements BoardService {
         board.update(boardRequestDto.getTitle(),boardRequestDto.getContent());
         return board;
     }
-    public List<Board> searchBoards(BoardSerachRequestDTO boardSerachRequestDTO){
-        return boardDao.search(boardSerachRequestDTO.getTitle());
+    public  Page<Board>  searchBoards(Pageable pageable,BoardSerachRequestDTO boardSerachRequestDTO){
+     return  boardDao.search(pageable, boardSerachRequestDTO.getTitle());
     }
 
     // 특정 ID에 해당하는 게시판 삭제
@@ -53,4 +57,11 @@ public class BoardServiceImpl implements BoardService {
 
     // 제목으로 게시판 검색
 
+
+    @Override
+    public Page<Board>findAllBoards(Pageable pageable) {
+
+       return boardDao.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));
+
+    }
 }

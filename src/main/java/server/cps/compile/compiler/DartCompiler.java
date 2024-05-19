@@ -8,7 +8,7 @@ import server.cps.compile.repository.CodeRepository;
 import server.cps.compile.repository.DockerRepository;
 import server.cps.infra.ProcessExecutor;
 import server.cps.model.CompilationResult;
-import server.cps.problem.dto.SubmissionRequstDTO;
+import server.cps.submission.dto.SubmissionRequstDTO;
 
 import java.io.File;
 import java.io.IOException;

@@ -3,7 +3,7 @@ package server.cps.compile.compiler;
 import org.springframework.stereotype.Component;
 import server.cps.compile.dto.Command;
 import server.cps.compile.dto.CompileRequestDTO;
-import server.cps.problem.dto.SubmissionRequstDTO;
+import server.cps.submission.dto.SubmissionRequstDTO;
 import server.cps.infra.ProcessExecutor;
 import server.cps.model.CompilationResult;
 import server.cps.compile.repository.CodeRepository;

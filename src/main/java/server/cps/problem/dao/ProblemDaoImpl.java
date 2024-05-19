@@ -2,6 +2,8 @@ package server.cps.problem.dao;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import server.cps.entity.Problem;
@@ -27,8 +29,8 @@ public class ProblemDaoImpl implements ProblemDAO{
     }
 
     @Override
-    public List<Problem> findAll() {
-        return problemRespository.findAll();
+    public Page<Problem> findAll(Pageable pageable) {
+        return problemRespository.findAll(pageable);
     }
 
     @Override
@@ -38,8 +40,8 @@ public class ProblemDaoImpl implements ProblemDAO{
     }
 
     @Override
-    public List<Problem> search(String title) {
-        return problemRespository.findByTitleContainingIgnoreCase(title);
+    public Page<Problem> search(Pageable pageable,String title) {
+        return problemRespository.findByTitleContainingIgnoreCase(pageable,title);
     }
 
     @Override

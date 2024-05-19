@@ -2,33 +2,56 @@ package server.cps.problem.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import server.cps.common.CpsResponse;
 import server.cps.common.ResoponseBody;
 import server.cps.common.Status;
-import server.cps.compile.service.CompilerSelectService;
+import server.cps.common.page.PageResponse;
+import server.cps.common.page.Pageinfo;
 import server.cps.entity.Problem;
-import server.cps.model.SubmissionResult;
 import server.cps.problem.dto.ProblemRequestDTO;
 import server.cps.problem.dto.ProblemSearchResponseDTO;
-import server.cps.problem.dto.SubmissionRequstDTO;
+import server.cps.problem.mapper.ProblemMapper;
 import server.cps.problem.service.ProblemService;
-import server.cps.problem.service.SubmitService;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
 @CrossOrigin
 @RequiredArgsConstructor
 public class ProblemController {
-    private final CompilerSelectService compilerSelectService;
-    private final SubmitService submitService;
+
     private  final ProblemService problemService;
+    private final ProblemMapper problemMapper;
     @GetMapping("/api/problems")
-    public List<ProblemSearchResponseDTO> showProblems(){
-        return  problemService.findIdAndTitle();
+    public ResponseEntity<ResoponseBody<PageResponse<ProblemSearchResponseDTO>>> showProblems(@PageableDefault(page = 0, size = 10) Pageable pageable){
+        Page<Problem> problems = problemService.showProblemAll(pageable);
+        Pageinfo pageinfo = new Pageinfo(problems,pageable);
+        List<ProblemSearchResponseDTO> problemDtoList = problemMapper.toDtoList(problems);
+        PageResponse<ProblemSearchResponseDTO> pageResponse = PageResponse.<ProblemSearchResponseDTO>builder()
+                .content(problemDtoList)
+                .pageinfo(pageinfo)
+                .build();
+        return CpsResponse.toResponse(Status.READ,pageResponse);
+    }
+    @GetMapping("/api/problems/search")
+    public ResponseEntity<ResoponseBody<PageResponse<ProblemSearchResponseDTO>>> searchProblems(@PageableDefault(page = 0, size = 10) Pageable pageable,@RequestParam("title") String title){
+        ProblemRequestDTO problemRequestDTO = new ProblemRequestDTO();
+        problemRequestDTO.setTitle(title);
+        Page<Problem> problems = problemService.searchProblems(pageable,problemRequestDTO);
+        Pageinfo pageinfo = new Pageinfo(problems,pageable);
+        List<ProblemSearchResponseDTO> problemDtoList = problemMapper.toDtoList(problems);
+        PageResponse<ProblemSearchResponseDTO> pageResponse = PageResponse.<ProblemSearchResponseDTO>builder()
+                .content(problemDtoList)
+                .pageinfo(pageinfo)
+                .build();
+        return CpsResponse.toResponse(Status.READ,pageResponse);
     }
     @GetMapping("/api/problem/{problemId}")
     public Problem getBoard(@PathVariable Long problemId)
@@ -36,23 +59,11 @@ public class ProblemController {
         return problemService.findById(problemId);
     }
     @PostMapping("/api/problem")
-    public Problem createProblem(@RequestBody ProblemRequestDTO problemRequestDTO)
+    public Problem createProblem(@RequestBody ProblemRequestDTO problemRequestDTO,@AuthenticationPrincipal UserDetails userDetails)
     {
         return problemService.saveProblem(problemRequestDTO);
     }
-    @PostMapping("/api/submit")
-    public ResponseEntity<ResoponseBody<SubmissionResult>> markCode(@RequestBody SubmissionRequstDTO submissionRequstDTO) {
-        submissionRequstDTO.setUserName("Test");
-        try {
-            submissionRequstDTO.setCompilationResults(compilerSelectService.getCompilerForLanguage(submissionRequstDTO.getLanguage()).testAndRun(submissionRequstDTO));
-            return CpsResponse.toResponse(Status.SUCCESS,submitService.mark(submissionRequstDTO));
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 
 }

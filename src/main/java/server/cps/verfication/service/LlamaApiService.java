@@ -12,6 +12,6 @@ public class LlamaApiService {
     private final ApiService<VerficationResponse> apiService;
 
     public VerficationResponse callLLamaServer(VerificationRequest verificationRequest){
-        return apiService.post("http://localhost:8000/api/verification", HttpHeaders.EMPTY,verificationRequest, VerficationResponse.class).getBody();
+        return apiService.post("http://220.67.153.63:8000/api/verification", HttpHeaders.EMPTY,verificationRequest, VerficationResponse.class).getBody();
     }
 }

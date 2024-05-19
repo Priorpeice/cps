@@ -1,5 +1,8 @@
 package server.cps.board.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import server.cps.board.dto.BoardDto;
 import server.cps.board.dto.BoardRequestDto;
 import server.cps.board.dto.BoardResponseDto;
 import server.cps.board.dto.BoardSerachRequestDTO;
@@ -12,8 +15,9 @@ public interface BoardService {
     BoardResponseDto saveBoard(BoardRequestDto boardRequestDto, Member member);
     Board findBoard(Long id);
     Board updateBoard(Long id, BoardRequestDto boardRequestDto);
-    List<Board> showBoardAll();
-    List<Board> searchBoards(BoardSerachRequestDTO boardSerachRequestDTO);
+    List<BoardDto> showBoardAll();
+    Page<Board>  searchBoards(Pageable pageable,BoardSerachRequestDTO boardSerachRequestDTO);
     void deleteBoard(Long id) ;
+    Page<Board>  findAllBoards(Pageable pageable);
 
 }

@@ -2,7 +2,7 @@ package server.cps.compile.repository;
 
 import org.springframework.stereotype.Repository;
 import server.cps.compile.dto.CompileRequestDTO;
-import server.cps.problem.dto.SubmissionRequstDTO;
+import server.cps.submission.dto.SubmissionRequstDTO;
 
 import java.io.File;
 import java.io.PrintWriter;

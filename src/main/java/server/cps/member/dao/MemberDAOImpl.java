@@ -36,4 +36,9 @@ public class MemberDAOImpl implements MemberDAO{
         Member member = memberRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
         memberRepository.delete(member);
     }
+
+    @Override
+    public Member findByLoginIdWithMember(String loginid) {
+        return memberRepository.findByLoginIdWithMember(loginid).orElseThrow(()-> new MemberException(403));
+    }
 }

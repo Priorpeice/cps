@@ -9,4 +9,5 @@ public interface MemberDAO {
     Member findById(Long id);
     List<Member> findAll();
     void delete(Long id);
+    Member findByLoginIdWithMember(String loginid);
 }
