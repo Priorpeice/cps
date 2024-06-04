@@ -30,6 +30,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET , "/api/problem/{problemId}").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/problem").hasRole("USER")
                         .requestMatchers(HttpMethod.POST,"/api/board").hasRole("USER") // 로그인 api
+                        .requestMatchers(HttpMethod.POST,"/api/board/{boardId}").hasRole("USER")
                         .requestMatchers("/api/auth/member").permitAll() // 회원가입 api
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/member").hasRole("USER")

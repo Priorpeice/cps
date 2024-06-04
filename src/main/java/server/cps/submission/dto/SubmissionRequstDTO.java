@@ -3,7 +3,7 @@ package server.cps.submission.dto;
 import lombok.Getter;
 import lombok.Setter;
 import server.cps.compile.dto.Command;
-import server.cps.model.CompilationResult;
+import server.cps.compile.dto.CompilationResult;
 
 import java.util.List;
 

@@ -8,6 +8,7 @@ import server.cps.comment.dao.CommentDao;
 import server.cps.comment.dto.CommentRequestDto;
 import server.cps.entity.Board;
 import server.cps.entity.Comment;
+import server.cps.entity.Member;
 
 import java.util.List;
 
@@ -19,8 +20,8 @@ public class CommentServiceImpl implements CommentService {
     private final CommentDao commentDao;
     private final BoardDao boardDao;
 
-    public Comment saveComment (CommentRequestDto commentRequestDto , Board board){
-        Comment comment=commentRequestDto.toEntity(board);
+    public Comment saveComment (CommentRequestDto commentRequestDto , Board board, Member member){
+        Comment comment=commentRequestDto.toEntity(board, member);
         return commentDao.save(comment);
     }
     public List<Comment> searchComment(Long boardId) {

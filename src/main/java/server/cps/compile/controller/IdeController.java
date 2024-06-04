@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import server.cps.common.CpsResponse;
-import server.cps.common.ResoponseBody;
+import server.cps.common.ResponseBody;
 import server.cps.common.Status;
 import server.cps.compile.dto.CompileRequestDTO;
 import server.cps.compile.service.CompilerSelectService;
 import server.cps.exception.DockerException;
-import server.cps.model.CompilationResult;
+import server.cps.compile.dto.CompilationResult;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ public class IdeController {
 //        return "ide";
 //    }
     @PostMapping("/api/compile")
-    public ResponseEntity<ResoponseBody<CompilationResult>> compileCode(@RequestBody CompileRequestDTO compileRequest)  {
+    public ResponseEntity<ResponseBody<CompilationResult>> compileCode(@RequestBody CompileRequestDTO compileRequest)  {
         compileRequest.setUserName("Test");
         try {
             CompilationResult result = compilerSelectService.getCompilerForLanguage(compileRequest.getLanguage()).compileAndRun(compileRequest);

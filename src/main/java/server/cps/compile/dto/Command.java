@@ -20,4 +20,12 @@ public class Command {
         this.fileExtension = fileExtension;
         this.inputExtension = inputExtension;
     }
+
+    public Command(String imageCommand, String fileExtension, String inputExtension, String compileCommand, String runCommand) {
+        this.imageCommand = imageCommand;
+        this.fileExtension = fileExtension;
+        this.inputExtension = inputExtension;
+        this.compileCommand = compileCommand;
+        this.runCommand = runCommand;
+    }
 }

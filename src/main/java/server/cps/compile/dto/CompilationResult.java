@@ -1,4 +1,4 @@
-package server.cps.model;
+package server.cps.compile.dto;
 
 public class CompilationResult {
     private String output;
