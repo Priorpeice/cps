@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import server.cps.compile.dto.CompileRequestDTO;
 import server.cps.exception.DockerException;
-import server.cps.model.CompilationResult;
+import server.cps.compile.dto.CompilationResult;
 import server.cps.submission.dto.SubmissionRequstDTO;
 
 import java.io.File;

@@ -1,4 +1,6 @@
-package server.cps.model;
+package server.cps.submission.dto;
+
+import server.cps.compile.dto.CompilationResult;
 
 import java.util.List;
 

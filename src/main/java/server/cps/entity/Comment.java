@@ -24,11 +24,11 @@ public class Comment {
     @Column(name = "comment_reg")
     @CreatedDate
     private LocalDateTime regDate;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     @JoinColumn(name= "member_id")
     private Member member;
     @JsonIgnore
-
     @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     @JoinColumn(name= "board_id")
     private Board board;

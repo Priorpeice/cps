@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 
-public class VerficationResponse {
+public class VerificationResponse {
     private String Response;
 
 }

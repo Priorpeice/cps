@@ -10,7 +10,6 @@ import server.cps.board.repository.BoardRepository;
 import server.cps.entity.Board;
 
 import java.util.List;
-
 @Repository
 @RequiredArgsConstructor
 public class BoardDaoImpl implements BoardDao {

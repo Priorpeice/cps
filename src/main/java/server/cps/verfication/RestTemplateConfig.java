@@ -17,8 +17,8 @@ public class RestTemplateConfig {
     public RestTemplate restTemplate (RestTemplateBuilder restTemplateBuilder){
         return restTemplateBuilder
                 .requestFactory(()-> new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()))
-                .setConnectTimeout(Duration.ofMinutes(2))
-                .setReadTimeout(Duration.ofMinutes(2))
+                .setConnectTimeout(Duration.ofMinutes(5))
+                .setReadTimeout(Duration.ofMinutes(5))
                 .additionalMessageConverters(new StringHttpMessageConverter(Charset.forName("UTF-8")))
                 .build();
 

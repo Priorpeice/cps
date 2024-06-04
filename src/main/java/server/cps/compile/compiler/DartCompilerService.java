@@ -7,7 +7,7 @@ import server.cps.compile.dto.CompileRequestDTO;
 import server.cps.compile.repository.CodeRepository;
 import server.cps.compile.repository.DockerRepository;
 import server.cps.infra.ProcessExecutor;
-import server.cps.model.CompilationResult;
+import server.cps.compile.dto.CompilationResult;
 import server.cps.submission.dto.SubmissionRequstDTO;
 
 import java.io.File;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @Component("dart")
 @RequiredArgsConstructor
-public class DartCompiler implements CompilerService{
+public class DartCompilerService implements CompilerService{
     private final CodeRepository codeRepository;
     private final DockerRepository dockerRepository;
     private final ProcessExecutor processExecutor;

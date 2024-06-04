@@ -10,7 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import server.cps.common.CpsResponse;
-import server.cps.common.ResoponseBody;
+import server.cps.common.ResponseBody;
 import server.cps.common.Status;
 import server.cps.common.page.PageResponse;
 import server.cps.common.page.Pageinfo;
@@ -30,7 +30,7 @@ public class ProblemController {
     private  final ProblemService problemService;
     private final ProblemMapper problemMapper;
     @GetMapping("/api/problems")
-    public ResponseEntity<ResoponseBody<PageResponse<ProblemSearchResponseDTO>>> showProblems(@PageableDefault(page = 0, size = 10) Pageable pageable){
+    public ResponseEntity<ResponseBody<PageResponse<ProblemSearchResponseDTO>>> showProblems(@PageableDefault(page = 0, size = 10) Pageable pageable){
         Page<Problem> problems = problemService.showProblemAll(pageable);
         Pageinfo pageinfo = new Pageinfo(problems,pageable);
         List<ProblemSearchResponseDTO> problemDtoList = problemMapper.toDtoList(problems);
@@ -41,7 +41,7 @@ public class ProblemController {
         return CpsResponse.toResponse(Status.READ,pageResponse);
     }
     @GetMapping("/api/problems/search")
-    public ResponseEntity<ResoponseBody<PageResponse<ProblemSearchResponseDTO>>> searchProblems(@PageableDefault(page = 0, size = 10) Pageable pageable,@RequestParam("title") String title){
+    public ResponseEntity<ResponseBody<PageResponse<ProblemSearchResponseDTO>>> searchProblems(@PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam("title") String title){
         ProblemRequestDTO problemRequestDTO = new ProblemRequestDTO();
         problemRequestDTO.setTitle(title);
         Page<Problem> problems = problemService.searchProblems(pageable,problemRequestDTO);

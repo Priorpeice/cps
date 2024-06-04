@@ -11,12 +11,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import server.cps.board.dto.BoardDto;
 import server.cps.board.dto.BoardRequestDto;
-import server.cps.board.dto.BoardResponseDto;
+import server.cps.board.dto.BoardsResponseDto;
 import server.cps.board.dto.BoardSerachRequestDTO;
 import server.cps.board.mapper.BoardMapper;
 import server.cps.board.service.BoardService;
+import server.cps.comment.dto.CommentDto;
+import server.cps.comment.mapper.CommentMapper;
 import server.cps.common.CpsResponse;
-import server.cps.common.ResoponseBody;
+import server.cps.common.ResponseBody;
 import server.cps.common.Status;
 import server.cps.common.page.PageResponse;
 import server.cps.common.page.Pageinfo;
@@ -35,9 +37,10 @@ public class BoardController {
     private final BoardService boardService;
     private final MemberSevice memberSevice;
     private final BoardMapper boardMapper;
+    private final CommentMapper commentMapper;
     @GetMapping("/api/boards")
 //    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ResoponseBody<PageResponse<BoardDto>>>getAllBoards(@PageableDefault(page = 0, size = 10)Pageable pageable) {
+    public ResponseEntity<ResponseBody<PageResponse<BoardDto>>>getAllBoards(@PageableDefault(page = 0, size = 10)Pageable pageable) {
         Page<Board> boards = boardService.findAllBoards(pageable);
         Pageinfo pageinfo = new Pageinfo(boards,pageable);
         List<BoardDto> boardDtoList = boardMapper.toDtoList(boards);
@@ -48,7 +51,7 @@ public class BoardController {
         return CpsResponse.toResponse(Status.READ,pageResponse);
     }
     @PostMapping("/api/board")
-    public BoardResponseDto createBoard(@RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal UserDetails userDetails) {
+    public BoardsResponseDto createBoard(@RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal UserDetails userDetails) {
         // 사용자의 memberId 가져오기
         String memberId = userDetails.getUsername();
         Member member = memberSevice.findMemberWithLoginid(memberId);
@@ -56,12 +59,15 @@ public class BoardController {
         return boardService.saveBoard(boardRequestDto, member);
     }
     @GetMapping("/api/board/{boardId}")
-    public Board getBoard(@PathVariable Long boardId)
+    public ResponseEntity<ResponseBody<BoardDto>> getBoard(@PathVariable Long boardId)
     {
-        return boardService.findBoard(boardId);
+        Board board = boardService.findBoard(boardId);
+        List<CommentDto> commentDto = commentMapper.toDtoList(board.getComments());
+        BoardDto dto = boardMapper.toDto(board, commentDto);
+        return CpsResponse.toResponse(Status.READ,dto);
     }
     @GetMapping("/api/boards/search")
-    public ResponseEntity<ResoponseBody<PageResponse<BoardDto>>> searchBoardsByTitle(@PageableDefault(page = 0, size = 10)Pageable pageable,@RequestParam("title") String title) {
+    public ResponseEntity<ResponseBody<PageResponse<BoardDto>>> searchBoardsByTitle(@PageableDefault(page = 0, size = 10)Pageable pageable, @RequestParam("title") String title) {
         BoardSerachRequestDTO boardSerachRequestDTO=new BoardSerachRequestDTO();
         boardSerachRequestDTO.setTitle(title);
         Page<Board> boards = boardService.searchBoards(pageable, boardSerachRequestDTO);
@@ -79,7 +85,7 @@ public class BoardController {
     }
     //삭제 반환 DTO
     @DeleteMapping("/api/board/{boardId}")
-    public ResponseEntity<ResoponseBody> deleteBoard(@PathVariable Long boardId){
+    public ResponseEntity<ResponseBody> deleteBoard(@PathVariable Long boardId){
         boardService.deleteBoard(boardId);
         return CpsResponse.toResponse(Status.SUCCESS); }
 }

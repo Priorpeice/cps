@@ -2,8 +2,8 @@ package server.cps.submission.service;
 
 import org.springframework.stereotype.Service;
 import server.cps.submission.dto.SubmissionRequstDTO;
-import server.cps.model.CompilationResult;
-import server.cps.model.SubmissionResult;
+import server.cps.compile.dto.CompilationResult;
+import server.cps.submission.dto.SubmissionResult;
 import server.cps.compile.repository.CodeRepository;
 
 import java.util.List;

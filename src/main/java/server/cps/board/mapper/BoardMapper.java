@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import server.cps.board.dto.BoardDto;
+import server.cps.comment.dto.CommentDto;
 import server.cps.entity.Board;
 
 import java.util.List;
@@ -23,6 +24,13 @@ public class BoardMapper {
                 .map(BoardMapper::toDto)
                 .collect(Collectors.toList());
     }
-
+    public  BoardDto toDto(Board board, List<CommentDto> commentDtos) {
+        BoardDto dto = new BoardDto();
+        dto.setId(board.getId());
+        dto.setTitle(board.getTitle());
+        dto.setMemberNickname(board.getMember().getNickname());
+        dto.setComments(commentDtos);
+        return dto;
+    }
 
 }

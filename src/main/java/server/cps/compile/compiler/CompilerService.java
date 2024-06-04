@@ -2,7 +2,7 @@ package server.cps.compile.compiler;
 
 import server.cps.compile.dto.CompileRequestDTO;
 import server.cps.submission.dto.SubmissionRequstDTO;
-import server.cps.model.CompilationResult;
+import server.cps.compile.dto.CompilationResult;
 
 import java.io.IOException;
 import java.util.List;
