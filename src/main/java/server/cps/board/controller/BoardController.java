@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import server.cps.board.dto.BoardDto;
 import server.cps.board.dto.BoardRequestDto;
-import server.cps.board.dto.BoardsResponseDto;
 import server.cps.board.dto.BoardSerachRequestDTO;
 import server.cps.board.mapper.BoardMapper;
 import server.cps.board.service.BoardService;
@@ -51,12 +50,14 @@ public class BoardController {
         return CpsResponse.toResponse(Status.READ,pageResponse);
     }
     @PostMapping("/api/board")
-    public BoardsResponseDto createBoard(@RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<ResponseBody<BoardDto>> createBoard(@RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal UserDetails userDetails) {
         // 사용자의 memberId 가져오기
         String memberId = userDetails.getUsername();
         Member member = memberSevice.findMemberWithLoginid(memberId);
 
-        return boardService.saveBoard(boardRequestDto, member);
+        Board board = boardService.saveBoard(boardRequestDto, member);
+        BoardDto dto= boardMapper.toDto(board);
+        return CpsResponse.toResponse(Status.READ,dto);
     }
     @GetMapping("/api/board/{boardId}")
     public ResponseEntity<ResponseBody<BoardDto>> getBoard(@PathVariable Long boardId)

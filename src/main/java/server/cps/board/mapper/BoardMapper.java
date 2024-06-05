@@ -12,25 +12,28 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class BoardMapper {
-    public static BoardDto toDto(Board board) {
+    public  BoardDto toDto(Board board) {
         BoardDto dto = new BoardDto();
         dto.setId(board.getId());
         dto.setTitle(board.getTitle());
         dto.setMemberNickname(board.getMember().getNickname());
         return dto;
-    }
-    public  List<BoardDto> toDtoList(Page<Board> boards) {
-        return boards.getContent().stream()
-                .map(BoardMapper::toDto)
-                .collect(Collectors.toList());
     }
     public  BoardDto toDto(Board board, List<CommentDto> commentDtos) {
         BoardDto dto = new BoardDto();
         dto.setId(board.getId());
         dto.setTitle(board.getTitle());
+        dto.setContent(board.getContent());
         dto.setMemberNickname(board.getMember().getNickname());
         dto.setComments(commentDtos);
         return dto;
     }
+
+    public  List<BoardDto> toDtoList(Page<Board> boards) {
+        return boards.getContent().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
 
 }

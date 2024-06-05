@@ -21,16 +21,10 @@ import java.io.IOException;
 @CrossOrigin
 @RequiredArgsConstructor
 public class IdeController {
-//    @Autowired
-//    private CompileService compileService;
 
     @Autowired
     private final CompilerSelectService compilerSelectService;
 
-//    @GetMapping("/ide")
-//    public String ide(){
-//        return "ide";
-//    }
     @PostMapping("/api/compile")
     public ResponseEntity<ResponseBody<CompilationResult>> compileCode(@RequestBody CompileRequestDTO compileRequest)  {
         compileRequest.setUserName("Test");
