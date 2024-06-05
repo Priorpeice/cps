@@ -15,6 +15,7 @@ import server.cps.common.Status;
 import server.cps.common.page.PageResponse;
 import server.cps.common.page.Pageinfo;
 import server.cps.entity.Problem;
+import server.cps.example.service.ExampleService;
 import server.cps.problem.dto.ProblemRequestDTO;
 import server.cps.problem.dto.ProblemSearchResponseDTO;
 import server.cps.problem.mapper.ProblemMapper;
@@ -27,8 +28,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProblemController {
 
-    private  final ProblemService problemService;
+    private final ProblemService problemService;
     private final ProblemMapper problemMapper;
+    private final ExampleService exampleService;
     @GetMapping("/api/problems")
     public ResponseEntity<ResponseBody<PageResponse<ProblemSearchResponseDTO>>> showProblems(@PageableDefault(page = 0, size = 10) Pageable pageable){
         Page<Problem> problems = problemService.showProblemAll(pageable);
@@ -61,7 +63,9 @@ public class ProblemController {
     @PostMapping("/api/problem")
     public Problem createProblem(@RequestBody ProblemRequestDTO problemRequestDTO,@AuthenticationPrincipal UserDetails userDetails)
     {
-        return problemService.saveProblem(problemRequestDTO);
+        Problem problem = problemService.saveProblem(problemRequestDTO);
+        exampleService.saveFile(problem);
+        return problem;
     }
 
 

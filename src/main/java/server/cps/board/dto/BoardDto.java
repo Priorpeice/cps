@@ -13,6 +13,7 @@ import java.util.List;
 public class BoardDto {
     private Long id;
     private String title;
+    private String content;
     private String memberNickname;
     private List<CommentDto> comments;
 }

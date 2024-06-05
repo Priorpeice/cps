@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import server.cps.board.dao.BoardDao;
 import server.cps.board.dto.BoardDto;
 import server.cps.board.dto.BoardRequestDto;
-import server.cps.board.dto.BoardsResponseDto;
 import server.cps.board.dto.BoardSerachRequestDTO;
 import server.cps.entity.Board;
 import server.cps.entity.Member;
@@ -22,15 +21,10 @@ import java.util.List;
 public class BoardServiceImpl implements BoardService {
     private final BoardDao boardDao;
 
-    public BoardsResponseDto saveBoard(BoardRequestDto boardRequestDto , Member member) {
+    public Board saveBoard(BoardRequestDto boardRequestDto , Member member) {
         Board board =boardRequestDto.toEntity(member);
-        Board saveBoard = boardDao.save(board);
-        return BoardsResponseDto.builder()
-                .boardId(saveBoard.getId().toString())
-                .title(saveBoard.getTitle())
-                .content(saveBoard.getContent())
-                .memberId(saveBoard.getMember().getId().toString())
-                .build();
+        return boardDao.save(board);
+
     }
     public Board findBoard(Long id){
 

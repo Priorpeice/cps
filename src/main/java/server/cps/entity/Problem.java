@@ -1,5 +1,6 @@
 package server.cps.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class Problem {
     /*persist도 같이 되야함*/
     @OneToMany(mappedBy = "problem",cascade = CascadeType.ALL)
     private List<Example> examples = new ArrayList<>();
+    @JsonIgnore
     @OneToMany(mappedBy = "problem",cascade = CascadeType.REMOVE)
     private List<Submission> submissions = new ArrayList<>();
     @Builder
