@@ -187,7 +187,7 @@ public class DockerExecutor implements ProcessExecutor{
 
     private static String preprocessLog(String logEntry) {
         // 특정 문자열이 포함되어 있으면 빈 문자열로 대체
-        return logEntry.replace("STDOUT:", "\n");
+        return logEntry.replace("STDOUT: ", "\n");
     }
     private static String preprocessErrLog(String logEntry) {
         // 특정 문자열이 포함되어 있으면 빈 문자열로 대체
