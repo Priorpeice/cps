@@ -16,6 +16,8 @@ public class SubmissionMapper {
         return SubmissionListResult.builder()
                 .code(submission.getCode())
                 .isAnswer(submission.getIsAnswer())
+                .problemId(submission.getProblem().getId().toString())
+                .nickname(submission.getMember().getNickname())
                 .build();
     }
     public List<SubmissionListResult> toDtoList(Page<Submission> submissions) {

@@ -79,4 +79,16 @@ public class SubmissionController {
                 .build();
         return CpsResponse.toResponse(Status.READ,pageResponse);
     }
+    @GetMapping("/api/submissions/search")
+    public ResponseEntity<ResponseBody<PageResponse<SubmissionListResult>>> getSearchSubmission (@PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam("title") String title)
+    {
+        Page<Submission> submissions = submissionService.search(pageable);
+        Pageinfo pageinfo= new Pageinfo(submissions,pageable);
+        List<SubmissionListResult> dtoList = submissionMapper.toDtoList(submissions);
+        PageResponse<SubmissionListResult> pageResponse = PageResponse.<SubmissionListResult>builder()
+                .content(dtoList)
+                .pageinfo(pageinfo)
+                .build();
+        return CpsResponse.toResponse(Status.READ,pageResponse);
+    }
 }

@@ -10,4 +10,6 @@ import lombok.RequiredArgsConstructor;
 public class SubmissionListResult {
     private final String code;
     private final Boolean isAnswer;
+    private final String problemId;
+    private final String nickname;
 }
