@@ -8,8 +8,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Builder
 public class SubmissionListResult {
-    private final String code;
+    private final String submissionId;
+    private final String  language;
     private final Boolean isAnswer;
     private final String problemId;
     private final String nickname;
+
 }

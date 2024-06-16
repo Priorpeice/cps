@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import server.cps.entity.Submission;
 
 import java.util.Optional;
@@ -15,4 +16,7 @@ public interface SubmissionRepository extends JpaRepository<Submission,Long> {
 
     @Query("SELECT s FROM Submission s JOIN FETCH s.member m LEFT JOIN FETCH m.role LEFT JOIN FETCH m.login JOIN FETCH s.problem")
     Page<Submission> findAllSubmissionsWithMemberAndMemberAssociationsAndProblem(Pageable pageable);
+    @Query("SELECT s FROM Submission s JOIN FETCH s.member m LEFT JOIN FETCH m.role LEFT JOIN FETCH m.login JOIN FETCH s.problem p WHERE p.id = :problemId")
+    Page<Submission> findSubmissionsWithMemberAndMemberAssociationsAndProblem(@Param("problemId") Long problemId, Pageable pageable);
+
 }
