@@ -36,7 +36,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     }
 
     public void exceptionHandler(HttpServletResponse response, ErrorStatus error) {
-        response.setStatus(403);
+        response.setStatus(401);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         try {
