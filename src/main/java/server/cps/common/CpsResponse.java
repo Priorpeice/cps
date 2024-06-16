@@ -28,7 +28,7 @@ public class CpsResponse {
         return ResponseEntity.ok().body(toBody(messageFormat));
     }
 
-    public static <T> ResponseEntity<ResponseBody<T>> toResponse(MessageFormat messageFormat, int status) {
+    public static <T> ResponseEntity<ResponseBody> toResponse(MessageFormat messageFormat, int status) {
         return ResponseEntity.status(status).body(toBody(messageFormat));
     }
 

@@ -2,19 +2,19 @@ package server.cps.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
+import server.cps.aop.ErrorStatus;
 
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends GenericFilterBean {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
     private final TokenProvider tokenProvider;
@@ -22,10 +22,21 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     // 실제 필터릴 로직
     // 토큰의 인증정보를 SecurityContext에 저장하는 역할 수행
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         // 1. Request Header 에서 JWT 토큰 추출
         String token = resolveToken((HttpServletRequest) request);
+
+        if (token == null) {
+            request.setAttribute("exception", ErrorStatus.NOT_JWT_ERROR);
+            filterChain.doFilter(request, response);
+            return;
+        }
+        if (!tokenProvider.validateToken(token)) {
+            request.setAttribute("exception", ErrorStatus.EXP_JWT_ERROR);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // 2. validateToken 으로 토큰 유효성 검사
         if (token != null && tokenProvider.validateToken(token)) {
@@ -34,8 +45,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         //토큰을 refreshToken을
-        chain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
+
+
 
     // Request Header 에서 토큰 정보 추출
     private String resolveToken(HttpServletRequest request) {
@@ -45,4 +58,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         }
         return null;
     }
+
+
 }

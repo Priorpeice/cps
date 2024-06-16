@@ -143,6 +143,7 @@ public class DockerExecutor implements ProcessExecutor{
         try{
         for (int i = 1; i <= problemRequstDTO.getNumberOfFile(); i++) {
             String runCommand = problemRequstDTO.getCommand().getRunCommand() + " < " + i + ".in";
+
             // 여러 번 실행하는 코드
             String containerId = dockerClient.createContainerCmd(compilationResult.getOutput())
                     .withCmd("timeout", "3s", "sh", "-c", runCommand)
@@ -181,6 +182,9 @@ public class DockerExecutor implements ProcessExecutor{
     } catch (StringIndexOutOfBoundsException e){
             CompilationResult cr= new CompilationResult(e.toString(),false);
             compilationResults.add(cr);
+        }
+        finally {
+            dockerClient.removeImageCmd(compilationResult.getOutput()).exec();
         }
         return compilationResults;
     }

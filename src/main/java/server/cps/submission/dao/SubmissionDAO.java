@@ -11,4 +11,5 @@ public interface SubmissionDAO {
     Optional<Submission> findById(Long id);
     void delete(Submission submission);
     Page<Submission> findSubmissions(Pageable pageable);
+    Page<Submission> findByProblemId(Pageable pageable,Long problemId );
 }

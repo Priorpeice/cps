@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 public class SubmissionMapper {
     public static SubmissionListResult toDto(Submission submission) {
         return SubmissionListResult.builder()
-                .code(submission.getCode())
+                .submissionId(submission.getId().toString())
+                .language(submission.getLanguage())
                 .isAnswer(submission.getIsAnswer())
                 .problemId(submission.getProblem().getId().toString())
                 .nickname(submission.getMember().getNickname())

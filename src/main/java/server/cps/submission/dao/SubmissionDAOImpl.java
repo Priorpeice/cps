@@ -31,4 +31,9 @@ public class SubmissionDAOImpl implements  SubmissionDAO{
     public Page<Submission> findSubmissions(Pageable pageable) {
         return submissionRepository.findAllSubmissionsWithMemberAndMemberAssociationsAndProblem(pageable);
     }
+
+    @Override
+    public Page<Submission> findByProblemId(Pageable pageable, Long problemId) {
+        return submissionRepository.findSubmissionsWithMemberAndMemberAssociationsAndProblem(problemId, pageable);
+    }
 }

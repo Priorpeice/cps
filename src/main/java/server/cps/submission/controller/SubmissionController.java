@@ -70,7 +70,7 @@ public class SubmissionController {
     @GetMapping("/api/submissions")
     public ResponseEntity<ResponseBody<PageResponse<SubmissionListResult>>> getAllSubmission (@PageableDefault(page = 0, size = 10) Pageable pageable)
     {
-        Page<Submission> submissions = submissionService.search(pageable);
+        Page<Submission> submissions = submissionService.findAll(pageable);
         Pageinfo pageinfo= new Pageinfo(submissions,pageable);
         List<SubmissionListResult> dtoList = submissionMapper.toDtoList(submissions);
         PageResponse<SubmissionListResult> pageResponse = PageResponse.<SubmissionListResult>builder()
@@ -80,9 +80,21 @@ public class SubmissionController {
         return CpsResponse.toResponse(Status.READ,pageResponse);
     }
     @GetMapping("/api/submissions/search")
-    public ResponseEntity<ResponseBody<PageResponse<SubmissionListResult>>> getSearchSubmission (@PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam("title") String title)
+    public ResponseEntity<ResponseBody<PageResponse<SubmissionListResult>>> getSearchSubmission (@PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam("problemId") Long problemId)
     {
-        Page<Submission> submissions = submissionService.search(pageable);
+        Page<Submission> submissions = submissionService.search(pageable,problemId);
+        Pageinfo pageinfo= new Pageinfo(submissions,pageable);
+        List<SubmissionListResult> dtoList = submissionMapper.toDtoList(submissions);
+        PageResponse<SubmissionListResult> pageResponse = PageResponse.<SubmissionListResult>builder()
+                .content(dtoList)
+                .pageinfo(pageinfo)
+                .build();
+        return CpsResponse.toResponse(Status.READ,pageResponse);
+    }
+    @GetMapping("/api/submission/{problemId}")
+    public ResponseEntity<ResponseBody<PageResponse<SubmissionListResult>>> getSubmissionByProblemId (@PageableDefault(page = 0, size = 10) Pageable pageable, @PathVariable Long problemId)
+    {
+        Page<Submission> submissions = submissionService.search(pageable,problemId);
         Pageinfo pageinfo= new Pageinfo(submissions,pageable);
         List<SubmissionListResult> dtoList = submissionMapper.toDtoList(submissions);
         PageResponse<SubmissionListResult> pageResponse = PageResponse.<SubmissionListResult>builder()

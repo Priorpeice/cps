@@ -19,6 +19,7 @@ public class SubmissionServiceImpl implements SubmissionService{
     public Submission submissionSave(SubmissionInfoDTO submissionInfoDTO) {
         Submission submission = Submission.builder()
                 .code(submissionInfoDTO.getCode())
+                .language(submissionInfoDTO.getLanguage())
                 .member(submissionInfoDTO.getMember())
                 .problem(submissionInfoDTO.getProblem())
                 .isAnswer(submissionInfoDTO.getIsSuccess())
@@ -28,7 +29,12 @@ public class SubmissionServiceImpl implements SubmissionService{
     }
 
     @Override
-    public Page<Submission> search(Pageable pageable) {
+    public Page<Submission> search(Pageable pageable, Long ProblemId) {
+        return submissionDAO.findByProblemId(pageable, ProblemId);
+    }
+
+    @Override
+    public Page<Submission> findAll(Pageable pageable) {
         return submissionDAO.findSubmissions(pageable);
     }
 }

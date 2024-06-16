@@ -7,5 +7,7 @@ import server.cps.submission.dto.SubmissionInfoDTO;
 
 public interface SubmissionService {
     Submission submissionSave(SubmissionInfoDTO submissionInfoDTO);
-    Page<Submission> search(Pageable pageable);
+    Page<Submission> search(Pageable pageable, Long ProblemId);
+
+    Page<Submission> findAll(Pageable pageable);
 }
