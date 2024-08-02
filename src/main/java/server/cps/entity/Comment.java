@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)//접근 레벨 프로텍
 @EntityListeners(AuditingEntityListener.class)
-
 public class Comment {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

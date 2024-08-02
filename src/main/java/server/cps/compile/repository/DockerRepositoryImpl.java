@@ -53,11 +53,11 @@ public class DockerRepositoryImpl implements DockerRepository {
         String userFolderPath= problemRequstDTO.getFolderPath();
         Optional.ofNullable(problemRequstDTO).ifPresent(dto -> {
             try (PrintWriter writer = new PrintWriter(dockerfile)) {
-                writer.println("FROM " + dto.getCommand().getImageCommand() );
-                writer.println("WORKDIR /usr/src/app");
+                writer.println("FROM " + dto.getCommand().getImageCommand() ); // image 만드는 커멘드
+                writer.println("WORKDIR /usr/src/app");// 동작 폴더 지정
                 // COPY 코드 파일
                 if(problemRequstDTO.getLanguage().equals("java") ){
-                    writer.println("COPY " + userFolderPath + "/" +dto.getUserName()+ dto.getCommand().getFileExtension() + " Main.java");
+                    writer.println("COPY " + userFolderPath + "/" +dto.getUserName()+ dto.getCommand().getFileExtension() + " Main.java"); // 자바
                 }else {
                     writer.println("COPY " + userFolderPath + "/" +dto.getUserName()+ dto.getCommand().getFileExtension() + " /usr/src/app/");
                 }
