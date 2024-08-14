@@ -17,9 +17,7 @@ real_time=$(echo "$output" | grep "real" | awk '{print $2}')
 # 메모리 사용량 수집
 memory_usage=$(smem -p -r -c "pid rss" | grep $(pgrep -f "$program_command") | awk '{print $6}')  # 수정된 부분
 
-# 결과 추출 (Java 프로그램 출력에 맞게 수정 필요)
-# 예시: "Result:" 키워드를 가진 줄에서 결과값 추출
-result=$(echo "$output" | grep "Result:" | awk '{print $2}')  # 예시에 맞게 수정 필요
+result=$(echo "$output" | grep "Result:" | awk '{print $2}')  
 
 # 실행 결과, 시간, 메모리 사용량, 결과값 출력
 echo "Exit Code: $exit_code"
