@@ -1,10 +1,12 @@
 package server.cps.compile.dto;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class Command {
     private String imageCommand;
     private String fileExtension;
@@ -28,4 +30,5 @@ public class Command {
         this.compileCommand = compileCommand;
         this.runCommand = runCommand;
     }
+
 }

@@ -3,16 +3,14 @@ package server.cps.compile.compiler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import server.cps.compile.dto.Command;
-import server.cps.compile.dto.CompileRequestDTO;
-import server.cps.submission.dto.SubmissionRequstDTO;
-import server.cps.infra.ProcessExecutor;
 import server.cps.compile.dto.CompilationResult;
+import server.cps.compile.dto.CompileRequestDTO;
 import server.cps.compile.repository.CodeRepository;
 import server.cps.compile.repository.DockerRepository;
+import server.cps.infra.ProcessExecutor;
+import server.cps.submission.dto.SubmissionRequstDTO;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,16 +31,16 @@ public class CppCompilerService implements CompilerService {
     public CompilationResult compileAndRun(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
         compileRequestDTO.setFolderPath(codeRepository.getFolder(compileRequestDTO.getUserName()));
         codeRepository.codeSave(compileRequestDTO.getCode(),compileRequestDTO.getUserName(),compileRequestDTO.getLanguage());
-        compileRequestDTO.setCommand(command("gcc:latest" , ".cpp",".in" , "RUN g++ -o " + compileRequestDTO.getUserName()+" "+ compileRequestDTO.getUserName()+".cpp || exit 1","./"+compileRequestDTO.getUserName()));
+        compileRequestDTO.setCodeFile(codeRepository.getCodeFile(compileRequestDTO.getUserName(),compileRequestDTO.getLanguage()));
+        compileRequestDTO.setCommand(command("gcc:latest" , ".cpp",".in" , "RUN g++ -o " + compileRequestDTO.getUserName()+" "+ compileRequestDTO.getUserName()+".cpp || exit 1","g++ -o "+"/app/"+compileRequestDTO.getUserName()+" /app/"+compileRequestDTO.getUserName()+".cpp && time -p /app/"+compileRequestDTO.getUserName()));
         if(!compileRequestDTO.getInput().isEmpty()){
             codeRepository.inputSave(compileRequestDTO.getInput(),compileRequestDTO.getUserName());
-            compileRequestDTO.getCommand().setRunCommand("./"+compileRequestDTO.getUserName()+"<"+compileRequestDTO.getUserName()+".in");
+            compileRequestDTO.setInputFile(codeRepository.getInputFile(compileRequestDTO.getUserName()));
+            compileRequestDTO.getCommand().setRunCommand("g++ -o "+"/app/"+compileRequestDTO.getUserName()+" /app/"+compileRequestDTO.getUserName()+".cpp && time -p /app/"+compileRequestDTO.getUserName()+" < "+compileRequestDTO.getUserName()+".in");
         }
-        compileRequestDTO.setFile(dockerRepository.compileDockerfile(compileRequestDTO));
-        CompilationResult compilationResult = processExecutor.executeCompile(compileRequestDTO.getFile());
-        if(compilationResult.isCompile()){
-            return processExecutor.executeRun(compileRequestDTO);
-        }
+
+        CompilationResult compilationResult = processExecutor.executeRun(compileRequestDTO);
+
         return compilationResult;
     }
 
@@ -50,16 +48,11 @@ public class CppCompilerService implements CompilerService {
     public List<CompilationResult> testAndRun(SubmissionRequstDTO problemRequstDTO) throws InterruptedException, IOException {
         problemRequstDTO.setFolderPath(codeRepository.getFolder(problemRequstDTO.getUserName()));
         codeRepository.codeSave(problemRequstDTO.getCode(),problemRequstDTO.getUserName(),problemRequstDTO.getLanguage());
-        problemRequstDTO.setCommand(command("gcc:latest" , ".cpp",".in" , "RUN g++ -o " +  problemRequstDTO.getUserName()+" "+  problemRequstDTO.getUserName()+".cpp || exit 1","time -p ./"+ problemRequstDTO.getUserName()));
+        problemRequstDTO.setCodeFile(codeRepository.getCodeFile(problemRequstDTO.getUserName(),problemRequstDTO.getLanguage()));
+        problemRequstDTO.setCommand(command("gcc:latest" , ".cpp",".in" , "RUN g++ -o " +  problemRequstDTO.getUserName()+" "+  problemRequstDTO.getUserName()+".cpp || exit 1","g++ -o "+"/app/"+problemRequstDTO.getUserName()+" /app/"+problemRequstDTO.getUserName()+".cpp && time -p /app/"+problemRequstDTO.getUserName()));
         problemRequstDTO.setNumberOfFile(codeRepository.countFile(problemRequstDTO.getProblemId(), ".in"));
-        File file =dockerRepository.compileDockerfile(problemRequstDTO);
-        CompilationResult compilationResult = processExecutor.executeCompile(file);
-        List<CompilationResult> compilationResults = new ArrayList<>();
-        if(compilationResult.isCompile()) {
-            compilationResults = processExecutor.executeRuns(problemRequstDTO);
-        }else{
-            compilationResults.add(compilationResult);
-        }
+        problemRequstDTO.setInputs(codeRepository.getFilesWithExtension(problemRequstDTO.getProblemId(), ".in"));
+        List<CompilationResult> compilationResults = processExecutor.executeRuns(problemRequstDTO);
         return compilationResults;
 
     }
