@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,9 +38,10 @@ public class BoardController {
     private final MemberSevice memberSevice;
     private final BoardMapper boardMapper;
     private final CommentMapper commentMapper;
+
     @GetMapping("/api/boards")
 //    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ResponseBody<PageResponse<BoardDto>>>getAllBoards(@PageableDefault(page = 0, size = 10)Pageable pageable) {
+    public ResponseEntity<ResponseBody<PageResponse<BoardDto>>>getAllBoards(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
         Page<Board> boards = boardService.findAllBoards(pageable);
         Pageinfo pageinfo = new Pageinfo(boards,pageable);
         List<BoardDto> boardDtoList = boardMapper.toDtoList(boards);
@@ -68,7 +70,7 @@ public class BoardController {
         return CpsResponse.toResponse(Status.READ,dto);
     }
     @GetMapping("/api/boards/search")
-    public ResponseEntity<ResponseBody<PageResponse<BoardDto>>> searchBoardsByTitle(@PageableDefault(page = 0, size = 10)Pageable pageable, @RequestParam("title") String title) {
+    public ResponseEntity<ResponseBody<PageResponse<BoardDto>>> searchBoardsByTitle(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC)Pageable pageable, @RequestParam("title") String title) {
         BoardSerachRequestDTO boardSerachRequestDTO=new BoardSerachRequestDTO();
         boardSerachRequestDTO.setTitle(title);
         Page<Board> boards = boardService.searchBoards(pageable, boardSerachRequestDTO);
@@ -89,4 +91,6 @@ public class BoardController {
     public ResponseEntity<ResponseBody> deleteBoard(@PathVariable Long boardId){
         boardService.deleteBoard(boardId);
         return CpsResponse.toResponse(Status.SUCCESS); }
+
+
 }

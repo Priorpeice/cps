@@ -3,6 +3,7 @@ package server.cps.submission.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,11 +19,11 @@ import server.cps.entity.Member;
 import server.cps.entity.Problem;
 import server.cps.entity.Submission;
 import server.cps.member.service.MemberSevice;
-import server.cps.submission.dto.SubmissionListResult;
-import server.cps.submission.dto.SubmissionResult;
 import server.cps.problem.service.ProblemService;
 import server.cps.submission.dto.SubmissionInfoDTO;
+import server.cps.submission.dto.SubmissionListResult;
 import server.cps.submission.dto.SubmissionRequstDTO;
+import server.cps.submission.dto.SubmissionResult;
 import server.cps.submission.mapper.SubmissionMapper;
 import server.cps.submission.service.ScoreService;
 import server.cps.submission.service.SubmissionService;
@@ -68,7 +69,7 @@ public class SubmissionController {
     }
 
     @GetMapping("/api/submissions")
-    public ResponseEntity<ResponseBody<PageResponse<SubmissionListResult>>> getAllSubmission (@PageableDefault(page = 0, size = 10) Pageable pageable)
+    public ResponseEntity<ResponseBody<PageResponse<SubmissionListResult>>> getAllSubmission (@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable)
     {
         Page<Submission> submissions = submissionService.findAll(pageable);
         Pageinfo pageinfo= new Pageinfo(submissions,pageable);
@@ -80,7 +81,7 @@ public class SubmissionController {
         return CpsResponse.toResponse(Status.READ,pageResponse);
     }
     @GetMapping("/api/submissions/search")
-    public ResponseEntity<ResponseBody<PageResponse<SubmissionListResult>>> getSearchSubmission (@PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam("problemId") Long problemId)
+    public ResponseEntity<ResponseBody<PageResponse<SubmissionListResult>>> getSearchSubmission (@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, @RequestParam("problemId") Long problemId)
     {
         Page<Submission> submissions = submissionService.search(pageable,problemId);
         Pageinfo pageinfo= new Pageinfo(submissions,pageable);
@@ -92,7 +93,7 @@ public class SubmissionController {
         return CpsResponse.toResponse(Status.READ,pageResponse);
     }
     @GetMapping("/api/submission/{problemId}")
-    public ResponseEntity<ResponseBody<PageResponse<SubmissionListResult>>> getSubmissionByProblemId (@PageableDefault(page = 0, size = 10) Pageable pageable, @PathVariable Long problemId)
+    public ResponseEntity<ResponseBody<PageResponse<SubmissionListResult>>> getSubmissionByProblemId (@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long problemId)
     {
         Page<Submission> submissions = submissionService.search(pageable,problemId);
         Pageinfo pageinfo= new Pageinfo(submissions,pageable);
