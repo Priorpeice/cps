@@ -20,10 +20,7 @@ import server.cps.entity.Problem;
 import server.cps.entity.Submission;
 import server.cps.member.service.MemberSevice;
 import server.cps.problem.service.ProblemService;
-import server.cps.submission.dto.SubmissionInfoDTO;
-import server.cps.submission.dto.SubmissionListResult;
-import server.cps.submission.dto.SubmissionRequstDTO;
-import server.cps.submission.dto.SubmissionResult;
+import server.cps.submission.dto.*;
 import server.cps.submission.mapper.SubmissionMapper;
 import server.cps.submission.service.ScoreService;
 import server.cps.submission.service.SubmissionService;
@@ -103,5 +100,12 @@ public class SubmissionController {
                 .pageinfo(pageinfo)
                 .build();
         return CpsResponse.toResponse(Status.READ,pageResponse);
+    }
+    @GetMapping("/api/submission/detail/{submissionId}")
+    public ResponseEntity<ResponseBody<SubmissionDetailDTO>> getSubmissionDetailBySubmissionId(@PathVariable Long submissionId)
+    {
+        Submission submissionDetail = submissionService.findSubmissionDetail(submissionId);
+        SubmissionDetailDTO detailDto = submissionMapper.toDetailDto(submissionDetail);
+        return CpsResponse.toResponse(Status.READ,detailDto);
     }
 }

@@ -9,7 +9,7 @@ public enum ErrorStatus implements MessageFormat {
     EXP_JWT_ERROR("JW01", "Expired Jwt"),
     NOT_JWT_ERROR("JW02", "Don't have Jwt"),
     NOT_FOUND_JWT_USER("JW03","invalid User"),
-
+    FILE_NOT_FOUND("ER02", "File Not Found"),
     ;
 
     String statusCode;

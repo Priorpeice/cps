@@ -29,6 +29,9 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((authorize)-> authorize
                         .requestMatchers("/" ).permitAll()
+                        .requestMatchers("/api/test").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/fileDownload").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET , "/api/submission/detail/{submissionId}").permitAll()
                         .requestMatchers(HttpMethod.GET , "/api/board/{boardId}").permitAll()
                         .requestMatchers(HttpMethod.GET , "/api/problem/{problemId}").permitAll()
                         .requestMatchers(HttpMethod.POST,"api/verification").permitAll()
