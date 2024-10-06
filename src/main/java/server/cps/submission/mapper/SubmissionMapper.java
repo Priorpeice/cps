@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import server.cps.entity.Submission;
+import server.cps.submission.dto.SubmissionDetailDTO;
 import server.cps.submission.dto.SubmissionListResult;
 
 import java.util.List;
@@ -25,5 +26,15 @@ public class SubmissionMapper {
         return  submissions.getContent().stream()
                 .map(SubmissionMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public  SubmissionDetailDTO toDetailDto(Submission submission)
+    {
+        return SubmissionDetailDTO.builder()
+                .code(submission.getCode())
+                .language(submission.getLanguage())
+                .isSuccess(submission.getIsAnswer())
+                .problemId(submission.getProblem().getId().toString())
+                .build();
     }
 }

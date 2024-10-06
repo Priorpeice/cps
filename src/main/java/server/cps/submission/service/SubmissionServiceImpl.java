@@ -29,6 +29,11 @@ public class SubmissionServiceImpl implements SubmissionService{
     }
 
     @Override
+    public Submission findSubmissionDetail(Long submissionId) {
+        return submissionDAO.findById(submissionId);
+    }
+
+    @Override
     public Page<Submission> search(Pageable pageable, Long ProblemId) {
         return submissionDAO.findByProblemId(pageable, ProblemId);
     }

@@ -29,6 +29,9 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((authorize)-> authorize
                         .requestMatchers("/" ).permitAll()
+                        .requestMatchers("/api/test").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/fileDownload").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET , "/api/submission/detail/{submissionId}").permitAll()
                         .requestMatchers(HttpMethod.GET , "/api/board/{boardId}").permitAll()
                         .requestMatchers(HttpMethod.GET , "/api/problem/{problemId}").permitAll()
                         .requestMatchers(HttpMethod.POST,"api/verification").permitAll()
@@ -36,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/api/board").hasRole("USER") // 로그인 api
                         .requestMatchers(HttpMethod.POST,"/api/board/{boardId}").hasRole("USER")
                         .requestMatchers(HttpMethod.POST,"/api/submit").hasRole("USER")
+                        .requestMatchers("/api/member/details").hasRole("USER")
                         .requestMatchers("/api/auth/member").permitAll() // 회원가입 api
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/member").hasRole("USER")

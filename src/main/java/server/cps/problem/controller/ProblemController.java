@@ -4,6 +4,7 @@ package server.cps.problem.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,7 +33,7 @@ public class ProblemController {
     private final ProblemMapper problemMapper;
     private final ExampleService exampleService;
     @GetMapping("/api/problems")
-    public ResponseEntity<ResponseBody<PageResponse<ProblemSearchResponseDTO>>> showProblems(@PageableDefault(page = 0, size = 10) Pageable pageable){
+    public ResponseEntity<ResponseBody<PageResponse<ProblemSearchResponseDTO>>> showProblems(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         Page<Problem> problems = problemService.showProblemAll(pageable);
         Pageinfo pageinfo = new Pageinfo(problems,pageable);
         List<ProblemSearchResponseDTO> problemDtoList = problemMapper.toDtoList(problems);
@@ -43,7 +44,7 @@ public class ProblemController {
         return CpsResponse.toResponse(Status.READ,pageResponse);
     }
     @GetMapping("/api/problems/search")
-    public ResponseEntity<ResponseBody<PageResponse<ProblemSearchResponseDTO>>> searchProblems(@PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam("title") String title){
+    public ResponseEntity<ResponseBody<PageResponse<ProblemSearchResponseDTO>>> searchProblems(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable, @RequestParam("title") String title){
         ProblemRequestDTO problemRequestDTO = new ProblemRequestDTO();
         problemRequestDTO.setTitle(title);
         Page<Problem> problems = problemService.searchProblems(pageable,problemRequestDTO);

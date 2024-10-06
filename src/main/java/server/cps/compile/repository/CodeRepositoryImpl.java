@@ -40,6 +40,26 @@ private final String path= "./user/";
     public List readFilesFromFolder(String problemId) {
         return readFilesFromFolder(problemId,"out");
     }
+    @Override
+    public List<File> getFilesWithExtension(String problemNumber, String extension) {
+        List<File> files = new ArrayList<>();
+        String folderPath = "testData/" + problemNumber + "/";
+
+        File folder = new File(folderPath);
+        if (folder.exists() && folder.isDirectory()) {
+            File[] fileArray = folder.listFiles((dir, name) -> name.endsWith(extension));
+            if (fileArray != null) {
+                for (File file : fileArray) {
+                    files.add(file);
+                }
+                Collections.sort(files, Comparator.comparing(File::getName));
+            }
+        } else {
+            System.out.println("not exist: " + folderPath);
+        }
+
+        return files;
+    }
 
     private void makeFile(String content, String fileName,String userName) throws IOException {
         String userFolderPath = createAndGetFolder(userName);
@@ -89,6 +109,19 @@ private final String path= "./user/";
     public String getFolder(String userName) {
         return createAndGetFolder(userName);
     }
+
+    @Override
+    public File getCodeFile(String userName , String language) {
+        String codePath = path+userName+"/"+userName;
+        return new File(codePath+"."+ language);
+    }
+
+    @Override
+    public File getInputFile(String userName) {
+        String inputPath = path+userName+"/"+userName;
+        return new File(inputPath+".in");
+    }
+
     private String createAndGetFolder(String userName){
         String userFolderPath = path + userName;
         // 폴더 생성 또는 존재 여부 확인
@@ -105,6 +138,7 @@ private final String path= "./user/";
             return reader.lines().collect(Collectors.toList());
         }
     }
+
 
 
 }

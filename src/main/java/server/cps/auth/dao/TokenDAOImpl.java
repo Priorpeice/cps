@@ -3,7 +3,7 @@ package server.cps.auth.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import server.cps.auth.repository.TokenRepository;
+import server.cps.redis.repository.TokenRepository;
 import server.cps.redis.Token;
 
 import java.util.NoSuchElementException;

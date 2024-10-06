@@ -10,4 +10,6 @@ public interface SubmissionService {
     Page<Submission> search(Pageable pageable, Long ProblemId);
 
     Page<Submission> findAll(Pageable pageable);
+
+    Submission findSubmissionDetail(Long submissionId);
 }

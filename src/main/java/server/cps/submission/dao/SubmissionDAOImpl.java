@@ -1,13 +1,12 @@
 package server.cps.submission.dao;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import server.cps.entity.Submission;
 import server.cps.submission.repository.SubmissionRepository;
-
-import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class SubmissionDAOImpl implements  SubmissionDAO{
@@ -18,8 +17,8 @@ public class SubmissionDAOImpl implements  SubmissionDAO{
     }
 
     @Override
-    public Optional<Submission> findById(Long id) {
-        return Optional.empty();
+    public Submission findById(Long id) {
+        return submissionRepository.findById(id).orElseThrow(()-> new EntityNotFoundException());
     }
 
     @Override

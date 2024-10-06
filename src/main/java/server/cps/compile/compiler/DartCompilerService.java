@@ -3,16 +3,14 @@ package server.cps.compile.compiler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import server.cps.compile.dto.Command;
+import server.cps.compile.dto.CompilationResult;
 import server.cps.compile.dto.CompileRequestDTO;
 import server.cps.compile.repository.CodeRepository;
 import server.cps.compile.repository.DockerRepository;
 import server.cps.infra.ProcessExecutor;
-import server.cps.compile.dto.CompilationResult;
 import server.cps.submission.dto.SubmissionRequstDTO;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,16 +25,16 @@ public class DartCompilerService implements CompilerService{
     public CompilationResult compileAndRun(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
         compileRequestDTO.setFolderPath(codeRepository.getFolder(compileRequestDTO.getUserName()));
         codeRepository.codeSave(compileRequestDTO.getCode(),compileRequestDTO.getUserName(),compileRequestDTO.getLanguage());
+        compileRequestDTO.setCodeFile(codeRepository.getCodeFile(compileRequestDTO.getUserName(),compileRequestDTO.getLanguage()));
         compileRequestDTO.setCommand(command("dart:latest AS dart-builder" , ".dart",".in" , "","dart "+compileRequestDTO.getUserName()+".dart"));
         if(!compileRequestDTO.getInput().isEmpty()){
             codeRepository.inputSave(compileRequestDTO.getInput(),compileRequestDTO.getUserName());
+            compileRequestDTO.setInputFile(codeRepository.getInputFile(compileRequestDTO.getUserName()));
             compileRequestDTO.getCommand().setRunCommand("dart "+compileRequestDTO.getUserName()+".dart"+"<"+compileRequestDTO.getUserName()+".in");
         }
-        compileRequestDTO.setFile(dockerRepository.compileDockerfile(compileRequestDTO));
-        CompilationResult compilationResult = processExecutor.executeCompile(compileRequestDTO.getFile());
-        if(compilationResult.isCompile()){
-            return processExecutor.executeRun(compileRequestDTO);
-        }
+
+        CompilationResult compilationResult = processExecutor.executeRun(compileRequestDTO);
+
         return compilationResult;
     }
 
@@ -47,16 +45,12 @@ public class DartCompilerService implements CompilerService{
     public List<CompilationResult> testAndRun(SubmissionRequstDTO problemRequstDTO) throws InterruptedException, IOException {
         problemRequstDTO.setFolderPath(codeRepository.getFolder(problemRequstDTO.getUserName()));
         codeRepository.codeSave(problemRequstDTO.getCode(),problemRequstDTO.getUserName(),problemRequstDTO.getLanguage());
+        problemRequstDTO.setCodeFile(codeRepository.getCodeFile(problemRequstDTO.getUserName(),problemRequstDTO.getLanguage()));
         problemRequstDTO.setCommand(command("dart:latest AS dart-builder" , ".dart",".in" , "","dart "+problemRequstDTO.getUserName()+".dart"));
         problemRequstDTO.setNumberOfFile(codeRepository.countFile(problemRequstDTO.getProblemId(), ".in"));
-        File file =dockerRepository.compileDockerfile(problemRequstDTO);
-        CompilationResult compilationResult = processExecutor.executeCompile(file);
-        List<CompilationResult> compilationResults = new ArrayList<>();
-        if(compilationResult.isCompile()) {
-            compilationResults = processExecutor.executeRuns(problemRequstDTO);
-        }else{
-            compilationResults.add(compilationResult);
-        }
+
+        List<CompilationResult> compilationResults = processExecutor.executeRuns(problemRequstDTO);
+
         return compilationResults;
     }
     private Command command(String imageCommand, String fileExtension, String inputExtension, String compileCommand , String runCommand ){

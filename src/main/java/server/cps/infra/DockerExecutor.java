@@ -9,10 +9,9 @@ import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.github.dockerjava.core.command.LogContainerResultCallback;
 import com.sun.jna.LastErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import server.cps.compile.dto.CompilationResult;
 import server.cps.compile.dto.CompileRequestDTO;
 import server.cps.exception.DockerException;
-import server.cps.compile.dto.CompilationResult;
 import server.cps.submission.dto.SubmissionRequstDTO;
 
 import java.io.File;
@@ -22,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-@Component
+//@Component
 public class DockerExecutor implements ProcessExecutor{
     private final DockerClient dockerClient;
     private CompilationResult compilationResult;

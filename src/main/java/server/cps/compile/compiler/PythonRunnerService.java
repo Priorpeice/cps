@@ -2,16 +2,14 @@ package server.cps.compile.compiler;
 
 import org.springframework.stereotype.Component;
 import server.cps.compile.dto.Command;
-import server.cps.compile.dto.CompileRequestDTO;
-import server.cps.submission.dto.SubmissionRequstDTO;
-import server.cps.infra.ProcessExecutor;
 import server.cps.compile.dto.CompilationResult;
+import server.cps.compile.dto.CompileRequestDTO;
 import server.cps.compile.repository.CodeRepository;
 import server.cps.compile.repository.DockerRepository;
+import server.cps.infra.ProcessExecutor;
+import server.cps.submission.dto.SubmissionRequstDTO;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component("py")
@@ -30,16 +28,16 @@ public class PythonRunnerService implements CompilerService {
     public CompilationResult compileAndRun(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
         compileRequestDTO.setFolderPath(codeRepository.getFolder(compileRequestDTO.getUserName()));
         codeRepository.codeSave(compileRequestDTO.getCode(),compileRequestDTO.getUserName(),compileRequestDTO.getLanguage());
-        compileRequestDTO.setCommand(command("python:latest" , ".py",".in" , "","python3 "+compileRequestDTO.getUserName()+".py"));
+        compileRequestDTO.setCodeFile(codeRepository.getCodeFile(compileRequestDTO.getUserName(),compileRequestDTO.getLanguage()));
+        compileRequestDTO.setCommand(command("python:latest" , ".py",".in" , "","time -p python3 "+"/app/"+compileRequestDTO.getUserName()+".py"));
         if(!compileRequestDTO.getInput().isEmpty()){
             codeRepository.inputSave(compileRequestDTO.getInput(),compileRequestDTO.getUserName());
-            compileRequestDTO.getCommand().setRunCommand("python3 "+compileRequestDTO.getUserName()+".py"+"<"+compileRequestDTO.getUserName()+".in");
+            compileRequestDTO.setInputFile(codeRepository.getInputFile(compileRequestDTO.getUserName()));
+            compileRequestDTO.getCommand().setRunCommand("time -p python3 "+ "/app/"+compileRequestDTO.getCodeFile().getName() +" < "+ "/app/"+compileRequestDTO.getInputFile().getName());
         }
-        compileRequestDTO.setFile(dockerRepository.compileDockerfile(compileRequestDTO));
-        CompilationResult compilationResult = processExecutor.executeCompile(compileRequestDTO.getFile());
-        if(compilationResult.isCompile()){
-            return processExecutor.executeRun(compileRequestDTO);
-        }
+
+        CompilationResult compilationResult = processExecutor.executeRun(compileRequestDTO);
+
         return compilationResult;
     }
 
@@ -47,15 +45,11 @@ public class PythonRunnerService implements CompilerService {
     public List<CompilationResult> testAndRun(SubmissionRequstDTO problemRequstDTO) throws InterruptedException, IOException {
         problemRequstDTO.setFolderPath(codeRepository.getFolder(problemRequstDTO.getUserName()));
         codeRepository.codeSave(problemRequstDTO.getCode(),problemRequstDTO.getUserName(),problemRequstDTO.getLanguage());
+        problemRequstDTO.setCodeFile(codeRepository.getCodeFile(problemRequstDTO.getUserName(),problemRequstDTO.getLanguage()));
         problemRequstDTO.setCommand(command("python:latest" , ".py",".in" , "","time -p python3 "+problemRequstDTO.getUserName()+".py"));
-        File file =dockerRepository.compileDockerfile(problemRequstDTO);
-        CompilationResult compilationResult = processExecutor.executeCompile(file);
-        List<CompilationResult> compilationResults = new ArrayList<>();
-        if(compilationResult.isCompile()) {
-            compilationResults = processExecutor.executeRuns(problemRequstDTO);
-        }else{
-            compilationResults.add(compilationResult);
-        }
+        problemRequstDTO.setInputs(codeRepository.getFilesWithExtension(problemRequstDTO.getProblemId(), ".in"));
+        List<CompilationResult> compilationResults = processExecutor.executeRuns(problemRequstDTO);
+
         return compilationResults;
     }
 

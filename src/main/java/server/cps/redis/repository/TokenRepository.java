@@ -1,4 +1,4 @@
-package server.cps.auth.repository;
+package server.cps.redis.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
