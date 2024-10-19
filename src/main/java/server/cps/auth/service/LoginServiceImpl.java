@@ -8,19 +8,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import server.cps.auth.dao.LoginDAO;
 import server.cps.auth.dao.TokenDAO;
 import server.cps.entity.Login;
-import server.cps.entity.Member;
-import server.cps.entity.Role;
 import server.cps.member.dao.MemberDAO;
-import server.cps.member.dto.MemberRequestDTO;
 import server.cps.redis.Token;
 import server.cps.security.TokenInfo;
 import server.cps.security.TokenProvider;
-
-import java.sql.SQLIntegrityConstraintViolationException;
 
 @Service
 @RequiredArgsConstructor
@@ -39,22 +33,6 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public Login findUserByLoginId(String loginId) {
         return loginDAO.findByLoginId(loginId);
-    }
-
-    @Override
-    public Member signUp(@RequestBody MemberRequestDTO memberRequestDTO)throws SQLIntegrityConstraintViolationException
-    {
-        //Memeber toEntity
-        String encode = encoder.encode(memberRequestDTO.getPw());
-        memberRequestDTO.setPw(encode);
-        Member member = memberRequestDTO.toEntity();
-        member.setLogin(memberRequestDTO.toEntity(member));
-
-        member.setRole(Role.builder()
-                .member(member)
-                .build());
-        //save
-        return memberDAO.save(member);
     }
 
    @Transactional
@@ -84,6 +62,7 @@ public class LoginServiceImpl implements LoginService{
         }
         throw new IllegalArgumentException("올바르지 않은 토큰");
     }
+
     private TokenInfo checkToken(String loginId, String password) {
 
         // 1. Login ID/PW 를 기반으로 Authentication 객체 생성

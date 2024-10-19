@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import server.cps.auth.dto.LoginRequestDTO;
 import server.cps.auth.service.LoginService;
+import server.cps.auth.service.RegisterService;
 import server.cps.auth.service.TokenService;
 import server.cps.entity.Member;
 import server.cps.member.dto.MemberRequestDTO;
@@ -18,11 +19,17 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final LoginService loginService;
+    private final RegisterService registerService;
     private final TokenService tokenService;
+    @GetMapping("member/duplicate")
+    public boolean duplicateIdTest(@RequestParam("loginId") String id)
+    {
+        return registerService.checkDuplicateId(id);
+    }
     @PostMapping("member")
     public Member signUp(@RequestBody MemberRequestDTO memberRequestDTO)throws SQLIntegrityConstraintViolationException
     {
-        return loginService.signUp(memberRequestDTO);
+        return registerService.signUp(memberRequestDTO);
     }
     @PostMapping("login")
     public TokenInfo login(@RequestBody LoginRequestDTO loginRequestDTO) {
