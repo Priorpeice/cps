@@ -14,7 +14,7 @@ public interface LoginRepository extends JpaRepository<Login, Long> {
     Optional<Login> findBySeq(Long id);
     void delete(Login login);
     Optional<Login> findById(String loginId);
-
+    boolean existsById(String loginId);
     @Query("SELECT new server.cps.auth.dto.AuthRequestDTO(l.id, l.pw, r.userRole) FROM Login l JOIN l.member m JOIN m.role r WHERE l.id = :loginId")
     Optional<AuthRequestDTO> findAuthById(@Param("loginId") String loginId);
 

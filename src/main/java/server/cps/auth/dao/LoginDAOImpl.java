@@ -22,4 +22,9 @@ public class LoginDAOImpl implements LoginDAO{
     public Login save(Login login) {
         return loginRepository.save(login);
     }
+
+    @Override
+    public boolean checkDuplicateId(String id) {
+        return loginRepository.existsById(id);
+    }
 }

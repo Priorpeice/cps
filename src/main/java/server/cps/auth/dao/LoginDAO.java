@@ -6,5 +6,6 @@ public interface LoginDAO {
     Login findBySeq(Long id);
     Login findByLoginId(String id);
     Login save(Login login);
+    boolean checkDuplicateId(String id);
 
 }
