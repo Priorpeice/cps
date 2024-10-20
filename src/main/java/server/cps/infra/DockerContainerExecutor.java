@@ -16,6 +16,7 @@ import server.cps.submission.dto.SubmissionRequstDTO;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -72,7 +73,7 @@ public class DockerContainerExecutor implements ProcessExecutor {
             // 컨테이너 생성 및 실행
             String containerId = dockerClient.createContainerCmd(imageName)
                     .withBinds(binds.toArray(new Bind[0]))
-                    .withCmd("timeout", "3s","sh", "-c" , runCommand )
+                    .withCmd("timeout", "3s","sh", "-c", runCommand )
                     .exec()
                     .getId();
 
@@ -88,10 +89,11 @@ public class DockerContainerExecutor implements ProcessExecutor {
                     .exec(new LogContainerResultCallback() {
                         @Override
                         public void onNext(Frame item) {
+                            String frameContent = new String(item.getPayload(), StandardCharsets.UTF_8);
                             if (item.getStreamType() == StreamType.STDOUT) {
-                                stdOutResult.append(preprocessLog(item.toString()));
+                                stdOutResult.append(preprocessLog(frameContent));
                             } else if (item.getStreamType() == StreamType.STDERR) {
-                                stdErrResult.append(preprocessErrLog(item.toString()));
+                                stdErrResult.append(preprocessErrLog(frameContent));
                             }
                         }
                     })
