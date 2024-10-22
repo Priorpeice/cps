@@ -1,5 +1,6 @@
 package server.cps.auth.service;
 
+import jakarta.servlet.http.Cookie;
 import server.cps.entity.Login;
 import server.cps.security.TokenInfo;
 
@@ -9,6 +10,8 @@ public interface LoginService {
 
     TokenInfo login(String memberId, String password);
     TokenInfo reissue(String memberId, String refreshToken);
+
+    Cookie createCookie(String refreshToken);
 
 
 }

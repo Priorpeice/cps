@@ -1,6 +1,7 @@
 package server.cps.auth.service;
 
 
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -61,6 +62,16 @@ public class LoginServiceImpl implements LoginService{
             return tokenInfo;
         }
         throw new IllegalArgumentException("올바르지 않은 토큰");
+    }
+
+    @Override
+    public Cookie createCookie(String refreshToken) {
+        Cookie cookie = new Cookie("refreshToken",refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(60*3600*24);
+        return cookie;
     }
 
     private TokenInfo checkToken(String loginId, String password) {
