@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import server.cps.auth.dao.LoginDAO;
 import server.cps.auth.dao.TokenDAO;
 import server.cps.entity.Login;
+import server.cps.exception.LoginPasswordException;
 import server.cps.member.dao.MemberDAO;
 import server.cps.redis.Token;
 import server.cps.security.TokenInfo;
@@ -46,7 +47,7 @@ public class LoginServiceImpl implements LoginService{
             tokenDAO.save(String.valueOf(login.getSeq()),tokenInfo.getRefreshToken());
             return tokenInfo;
         } else {
-            throw  new IllegalArgumentException();
+            throw  new LoginPasswordException("no matches pw", 401);
         }
     }
     @Transactional
