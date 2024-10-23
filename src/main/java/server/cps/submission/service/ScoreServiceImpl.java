@@ -35,7 +35,7 @@ public class ScoreServiceImpl implements ScoreService{
                 if (max <= runningTime) {
                     return new SubmissionResult(submissionRequstDTO.getCompilationResults(), totalScore, false);
                 }
-                if (compileResult.isCompile() && compileResult.getOutput().trim().equals(expectedOutput.trim())) {
+                if (compileResult.isCompile() && compileResult.getOutput().trim().equals(expectedOutput.replace("\r\n", "\n").trim())) {
 
                     totalScore += 10; // 일단 문제당 10점 부여
                 } else {
