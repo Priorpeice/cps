@@ -6,31 +6,28 @@ import server.cps.compile.dto.Command;
 import server.cps.compile.dto.CompilationResult;
 import server.cps.compile.dto.CompileRequestDTO;
 import server.cps.compile.repository.CodeRepository;
-import server.cps.compile.repository.DockerRepository;
 import server.cps.infra.ProcessExecutor;
 import server.cps.submission.dto.SubmissionRequstDTO;
 
 import java.io.IOException;
 import java.util.List;
-
-
-@Component("dart")
+@Component("swift")
 @RequiredArgsConstructor
-public class DartCompilerService implements CompilerService{
-    private final CodeRepository codeRepository;
-    private final DockerRepository dockerRepository;
-    private final ProcessExecutor processExecutor;
 
+public class SwiftComplierService implements CompilerService {
+    private final ProcessExecutor processExecutor;
+    private final CodeRepository codeRepository;
     @Override
     public CompilationResult compileAndRun(CompileRequestDTO compileRequestDTO) throws IOException, InterruptedException {
         compileRequestDTO.setFolderPath(codeRepository.getFolder(compileRequestDTO.getUserName()));
-        codeRepository.codeSave(compileRequestDTO.getCode(),compileRequestDTO.getUserName(),compileRequestDTO.getLanguage());
-        compileRequestDTO.setCodeFile(codeRepository.getCodeFile(compileRequestDTO.getUserName(),compileRequestDTO.getLanguage()));
-        compileRequestDTO.setCommand(command("dart:latest AS dart-builder" , ".dart",".in" , "","time -p dart "+"/app/"+compileRequestDTO.getUserName()+".dart"));
-        if(!compileRequestDTO.getInput().isEmpty()){
-            codeRepository.inputSave(compileRequestDTO.getInput(),compileRequestDTO.getUserName());
+        codeRepository.codeSave(compileRequestDTO.getCode(), compileRequestDTO.getUserName(), compileRequestDTO.getLanguage());
+        compileRequestDTO.setCodeFile(codeRepository.getCodeFile(compileRequestDTO.getUserName(), compileRequestDTO.getLanguage()));
+        compileRequestDTO.setCommand(command("", ".swift", ".in", "", "time -p swift " + "/app/" + compileRequestDTO.getUserName() + ".swift"));
+
+        if (!compileRequestDTO.getInput().isEmpty()) {
+            codeRepository.inputSave(compileRequestDTO.getInput(), compileRequestDTO.getUserName());
             compileRequestDTO.setInputFile(codeRepository.getInputFile(compileRequestDTO.getUserName()));
-            compileRequestDTO.getCommand().setRunCommand("dart "+compileRequestDTO.getUserName()+".dart"+"<"+compileRequestDTO.getUserName()+".in");
+            compileRequestDTO.getCommand().setRunCommand("swift " + compileRequestDTO.getUserName() + ".swift < " + compileRequestDTO.getUserName() + ".in");
         }
 
         CompilationResult compilationResult = processExecutor.executeRun(compileRequestDTO);
@@ -38,15 +35,12 @@ public class DartCompilerService implements CompilerService{
         return compilationResult;
     }
 
-
-    /* Dart 채점 로직 바꿔야함*/
-
     @Override
     public List<CompilationResult> testAndRun(SubmissionRequstDTO problemRequstDTO) throws InterruptedException, IOException {
         problemRequstDTO.setFolderPath(codeRepository.getFolder(problemRequstDTO.getUserName()));
-        codeRepository.codeSave(problemRequstDTO.getCode(),problemRequstDTO.getUserName(),problemRequstDTO.getLanguage());
-        problemRequstDTO.setCodeFile(codeRepository.getCodeFile(problemRequstDTO.getUserName(),problemRequstDTO.getLanguage()));
-        problemRequstDTO.setCommand(command("dart:latest AS dart-builder" , ".dart",".in" , "","time -p dart "+problemRequstDTO.getUserName()+".dart"));
+        codeRepository.codeSave(problemRequstDTO.getCode(), problemRequstDTO.getUserName(), problemRequstDTO.getLanguage());
+        problemRequstDTO.setCodeFile(codeRepository.getCodeFile(problemRequstDTO.getUserName(), problemRequstDTO.getLanguage()));
+        problemRequstDTO.setCommand(command("", ".swift", ".in", "", "time -p swift " + problemRequstDTO.getUserName() + ".swift"));
         problemRequstDTO.setNumberOfFile(codeRepository.countFile(problemRequstDTO.getProblemId(), ".in"));
 
         List<CompilationResult> compilationResults = processExecutor.executeRuns(problemRequstDTO);

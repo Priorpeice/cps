@@ -154,6 +154,10 @@ public class DockerContainerExecutor implements ProcessExecutor {
                 return "gcc:time"; // C 컴파일러가 포함된 Docker 이미지
             case "cpp":
                 return "gcc:time";
+            case "dart":
+                return "dart:time";
+            case "swift":
+                return "swift:time";
             default:
                 return "";
         }
