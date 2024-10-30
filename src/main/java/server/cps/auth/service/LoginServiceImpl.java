@@ -44,7 +44,7 @@ public class LoginServiceImpl implements LoginService{
         if (encoder.matches(password, login.getPw())) {
             String pw=login.getPw();
             TokenInfo tokenInfo= checkToken(loginId,pw);
-            tokenDAO.save(String.valueOf(login.getSeq()),tokenInfo.getRefreshToken());
+            tokenDAO.save(login.getId(),tokenInfo.getRefreshToken());
             return tokenInfo;
         } else {
             throw  new LoginPasswordException("no matches pw", 401);
@@ -57,7 +57,7 @@ public class LoginServiceImpl implements LoginService{
         if (TokenProvider.validateToken(refreshToken) &&
                 refreshToken.equals( token.getRefreshToken()))
         {
-            Login login=loginDAO.findBySeq(Long.valueOf(memberId));
+            Login login=loginDAO.findByLoginId(memberId);
             TokenInfo tokenInfo = checkToken(login.getId(), login.getPw());
             tokenDAO.save(String.valueOf(login.getSeq()),tokenInfo.getRefreshToken());
             return tokenInfo;

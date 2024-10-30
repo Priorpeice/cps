@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/member/details").hasRole("USER")
                         .requestMatchers("/api/auth/member").permitAll() // 회원가입 api
                         .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/rt").permitAll()
                         .requestMatchers("/api/member").hasRole("USER")
                         .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated())

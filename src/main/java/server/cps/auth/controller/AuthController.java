@@ -1,6 +1,7 @@
 package server.cps.auth.controller;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import server.cps.member.dto.MemberRequestDTO;
 import server.cps.security.TokenInfo;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Arrays;
 import java.util.Map;
 
 @RestController
@@ -50,14 +52,25 @@ public class AuthController {
 
         return CpsResponse.toResponse(Status.SUCCESS,tokenInfo, HttpStatus.OK.value());
     }
-    @PostMapping("/rt")//토큰 재발급 요청
-    private TokenInfo reToken(@RequestHeader("refreshToken") String refreshToken,
-                              @RequestBody Map<String, Long> id ) {
-        Long memberId=id.get("id");
+    @PostMapping("/rt") // 토큰 재발급 요청
+    private ResponseEntity<ResponseBody<TokenInfo>> reToken(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> id) {
+        String memberId = id.get("id");
 
-        TokenInfo tokenInfo = loginService.reissue(String.valueOf(memberId),refreshToken);
-        System.out.println("tokenInfo.getAccessToken() = " + tokenInfo.getAccessToken());
-        System.out.println("tokenInfo.getRefreshToken() = " + tokenInfo.getRefreshToken());
-        return tokenInfo;
+        // HttpServletRequest를 사용하여 쿠키에서 refreshToken을 가져옵니다.
+        String refreshToken = Arrays.stream(request.getCookies())
+                .filter(cookie -> "refreshToken".equals(cookie.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElse(null);
+
+        if (refreshToken == null) {
+            throw new RuntimeException("Refresh token not found");
+        }
+
+        TokenInfo tokenInfo = loginService.reissue(memberId, refreshToken);
+        Cookie cookie = loginService.createCookie(tokenInfo.getRefreshToken());
+        response.addCookie(cookie);
+        return CpsResponse.toResponse(Status.SUCCESS,tokenInfo, HttpStatus.OK.value());
     }
+
 }
