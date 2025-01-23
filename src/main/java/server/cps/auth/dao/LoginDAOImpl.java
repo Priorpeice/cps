@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import server.cps.auth.repository.LoginRepository;
 import server.cps.entity.Login;
+import server.cps.exception.LoginIdException;
+
 @Repository
 @RequiredArgsConstructor
 public class LoginDAOImpl implements LoginDAO{
@@ -15,7 +17,7 @@ public class LoginDAOImpl implements LoginDAO{
     }
     @Override
     public Login findByLoginId(String id) {
-        return loginRepository.findById(id).orElseThrow(()->new EntityNotFoundException());
+        return loginRepository.findById(id).orElseThrow(()->new LoginIdException(400));
     }
 
     @Override

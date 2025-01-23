@@ -10,6 +10,8 @@ public enum ErrorStatus implements MessageFormat {
     NOT_JWT_ERROR("JW02", "Don't have Jwt"),
     NOT_FOUND_JWT_USER("JW03","invalid User"),
     FILE_NOT_FOUND("ER02", "File Not Found"),
+    NOT_MATCHES_ID("LG01", "Not matches ID or Password"),
+    NOT_MATCHES_PASSWORD("LG02", "Not matches ID or Password"),
     ;
 
     String statusCode;

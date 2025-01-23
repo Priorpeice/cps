@@ -1,6 +1,7 @@
 package server.cps.auth.service;
 
 
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import server.cps.auth.dao.LoginDAO;
 import server.cps.auth.dao.TokenDAO;
 import server.cps.entity.Login;
+import server.cps.exception.LoginPasswordException;
 import server.cps.member.dao.MemberDAO;
 import server.cps.redis.Token;
 import server.cps.security.TokenInfo;
@@ -42,10 +44,10 @@ public class LoginServiceImpl implements LoginService{
         if (encoder.matches(password, login.getPw())) {
             String pw=login.getPw();
             TokenInfo tokenInfo= checkToken(loginId,pw);
-            tokenDAO.save(String.valueOf(login.getSeq()),tokenInfo.getRefreshToken());
+            tokenDAO.save(login.getId(),tokenInfo.getRefreshToken());
             return tokenInfo;
         } else {
-            throw  new IllegalArgumentException();
+            throw  new LoginPasswordException("no matches pw", 401);
         }
     }
     @Transactional
@@ -55,12 +57,22 @@ public class LoginServiceImpl implements LoginService{
         if (TokenProvider.validateToken(refreshToken) &&
                 refreshToken.equals( token.getRefreshToken()))
         {
-            Login login=loginDAO.findBySeq(Long.valueOf(memberId));
+            Login login=loginDAO.findByLoginId(memberId);
             TokenInfo tokenInfo = checkToken(login.getId(), login.getPw());
             tokenDAO.save(String.valueOf(login.getSeq()),tokenInfo.getRefreshToken());
             return tokenInfo;
         }
         throw new IllegalArgumentException("올바르지 않은 토큰");
+    }
+
+    @Override
+    public Cookie createCookie(String refreshToken) {
+        Cookie cookie = new Cookie("refreshToken",refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(60*3600*24);
+        return cookie;
     }
 
     private TokenInfo checkToken(String loginId, String password) {
